@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
 
-  bool isChecked = false;
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return Colors.white;
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
     }
-    return Colors.red;
+    if (_confirmPasswordController.text != value) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (_passwordController.text != value) {
+      return 'Passwords do not match';
+    }
+    return null;
   }
 
   @override
@@ -43,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                    child: Container(
                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                      child: const Text(
-                       "Login to your account",
+                       "Register Account",
                        style: TextStyle(
                            fontSize: 30
                        ),
@@ -71,8 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                 ),
                 Container(
-                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 10),
+                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 25),
                     child: TextField(
+                      controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -91,35 +101,39 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     )
                 ),
-                Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (bool? value) {setState(() {isChecked = value!;});},
-                        checkColor: Colors.white,
-                        fillColor: MaterialStateProperty.resolveWith(getColor),
-                      ),
-                    ),
-                    const Text(
-                      "Keep me logged in",
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(105, 0, 0, 0),
-                      child: const Text(
-                        "Forgot password?",
-                        style: TextStyle(
-                            fontSize: 10
+                Container(
+                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 30),
+                    child: TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
                         ),
-                      )
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.vpn_key_outlined,
+                          color: Color.fromRGBO(0, 0, 0, 100),
+                        ),
+                        hintText: 'Confirm Password',
+                      ),
                     )
-                  ],
                 ),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/saved');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Registration successful!'),
+                          duration: Duration(seconds: 3), // Change the duration as needed
+                        ),
+                      );
+
+                      Navigator.pushNamed(context, '/login');
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
@@ -133,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 55,
                       alignment: Alignment.center,
                       child: const Text(
-                        'Login',
+                        'Register',
                         style: TextStyle(fontSize: 18.0),
                       ),
                     ),
@@ -141,9 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Center(
                   child: TextButton(
-                    onPressed: () { Navigator.pushNamed(context, '/register'); },
+                    onPressed: () { Navigator.pushNamed(context, '/login'); },
                     child: const Text(
-                      "Signup",
+                      "Back to login",
                       style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Colors.redAccent,

@@ -4,7 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'SavedHeader.dart';
 import 'SavedButtons.dart';
 import 'SavedRestaurantList.dart';
-import 'SavedPlaceList.dart';class SavedPage extends StatefulWidget {
+import 'SavedPlaceList.dart';
+class SavedPage extends StatefulWidget {
   @override
   _SavedPageState createState() => _SavedPageState();
 }
