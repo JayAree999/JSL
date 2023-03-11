@@ -1,20 +1,18 @@
-import 'package:eat_local/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:eat_local/SavedPage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        backgroundColor: Color(0xffe3e2e2),
-        body: LoginScreen()
+    return MaterialApp(
+      title: 'My App',
+      home: MediaQuery(
+        data: MediaQueryData(),
+        child: SavedPage(),
       ),
     );
   }
