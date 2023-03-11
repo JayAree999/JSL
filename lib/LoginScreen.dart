@@ -105,15 +105,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text(
                       "Keep me logged in",
                     ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(105, 0, 0, 0),
-                      child: const Text(
-                        "Forgot password?",
-                        style: TextStyle(
-                            fontSize: 10
-                        ),
-                      )
-                    )
                   ],
                 ),
                 Center(
