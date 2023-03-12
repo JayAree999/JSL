@@ -39,7 +39,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                   child: const FittedBox(
                     fit: BoxFit.fill,
                     child: Image(
-                      image: AssetImage("images/bigBurger.png"),
+                      image: AssetImage("assets/images/bigBurger.png"),
                     ),
                   ),
                 ),
@@ -174,18 +174,29 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    width: 80,
-                    height: 50,
-                    padding: const EdgeInsets.only(left: 30),
-                    decoration: BoxDecoration(
-                      // color: Colors.pink,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const FittedBox(
-                      fit: BoxFit.fill,
-                      child: Image(
-                        image: AssetImage("images/arrow.png"),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 80,
+                      height: 50,
+                      padding: const EdgeInsets.only(left: 30),
+                      decoration: BoxDecoration(
+                        // color: Colors.pink,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const FittedBox(
+                        fit: BoxFit.fill,
+                        child: Image(
+                          image: AssetImage("assets/images/arrow.png"),
+                        ),
                       ),
                     ),
                   ),
@@ -196,11 +207,19 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                     decoration: BoxDecoration(
                       // color: Colors.pink,
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
                     child: const FittedBox(
                       fit: BoxFit.fill,
                       child: Image(
-                        image: AssetImage("images/redFavorite.png"),
+                        image: AssetImage("assets/images/redFavorite.png"),
                       ),
                     ),
                   ),

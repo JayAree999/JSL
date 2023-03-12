@@ -113,19 +113,19 @@ class _LocationScreenState extends State<LocationScreen> {
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
-                              listItem(),
+                              listItem(context),
                               const SizedBox(
                                 height: 10,
                               ),
-                              listItem(),
+                              listItem(context),
                               const SizedBox(
                                 height: 10,
                               ),
-                              listItem(),
+                              listItem(context),
                               const SizedBox(
                                 height: 10,
                               ),
-                              listItem(),
+                              listItem(context),
                             ],
                           ),
                         ),
@@ -168,14 +168,25 @@ class _LocationScreenState extends State<LocationScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Image(
-                      image: AssetImage("assets/images/arrow.png"),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const Image(
+                        image: AssetImage("assets/images/arrow.png"),
+                      ),
                     ),
                   ),
                   Container(
@@ -229,9 +240,24 @@ class _LocationScreenState extends State<LocationScreen> {
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: const Image(
-                      image: AssetImage("assets/images/save.png"),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                      child: Image.asset(
+                        'assets/images/save.png',
+                        height: 50,
+                        width: 50,
+                      ),
                     ),
                   ),
                 ],
@@ -247,9 +273,24 @@ class _LocationScreenState extends State<LocationScreen> {
                 padding: const EdgeInsets.only(right: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                child: const Image(
-                  image: AssetImage("assets/images/location.png"),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  child: Image.asset(
+                    'assets/images/locimage.png',
+                    height: 50,
+                    width: 50,
+                  ),
                 ),
               ),
               Container(height: 50)
@@ -260,83 +301,86 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
-  Widget listItem() {
-    return Container(
-      height: 65,
-      width: width - 30,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x3f000000),
-            blurRadius: 4,
-            offset: Offset(0, 4),
-          ),
-        ],
-        color: Colors.white,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              const SizedBox(
-                width: 65,
-                height: 65,
-                child: FittedBox(
-                  fit: BoxFit.fill,
-                  child: Image(
-                    image:
-                    AssetImage("assets/images/burger1.png"),
+  Widget listItem(context) {
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, "/restaurant"),
+      child: Container(
+        height: 65,
+        width: width - 30,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x3f000000),
+              blurRadius: 4,
+              offset: Offset(0, 4),
+            ),
+          ],
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const SizedBox(
+                  width: 65,
+                  height: 65,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Image(
+                      image:
+                      AssetImage("assets/images/burger1.png"),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Column(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                children: const [
-                  SizedBox(
-                    width: 70,
-                    height: 20,
-                    child: Text(
-                      "Best Burger",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontFamily: "Inter",
-                        fontWeight: FontWeight.w600,
+                const SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  mainAxisAlignment:
+                  MainAxisAlignment.center,
+                  crossAxisAlignment:
+                  CrossAxisAlignment.start,
+                  children: const [
+                    SizedBox(
+                      width: 70,
+                      height: 20,
+                      child: Text(
+                        "Best Burger",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontFamily: "Inter",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                  Opacity(
-                    opacity: 0.50,
-                    child: Text(
-                      "2.5km",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
-                        fontFamily: "Inter",
-                        fontWeight: FontWeight.w600,
+                    Opacity(
+                      opacity: 0.50,
+                      child: Text(
+                        "2.5km",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontFamily: "Inter",
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          const SizedBox(
-            width: 60,
-            height: 40,
-            child: Image(
-              image: AssetImage("assets/images/favorite.png"),
+                  ],
+                )
+              ],
             ),
-          ),
-        ],
+            const SizedBox(
+              width: 60,
+              height: 40,
+              child: Image(
+                image: AssetImage("assets/images/favorite.png"),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
