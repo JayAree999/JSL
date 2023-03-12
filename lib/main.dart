@@ -9,6 +9,14 @@ void main() {
   runApp(MyApp());
 }
 
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,7 +29,13 @@ class MyApp extends StatelessWidget {
         '/saved': (context) => SavedPage(),
         '/location': (context) => LocationScreen(),
         '/restaurant': (context) => RestaurantScreen(),
-      }
+      },
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: MyBehavior(),
+          child: child!,
+        );
+      },
     );
   }
 }
