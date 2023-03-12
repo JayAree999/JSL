@@ -143,6 +143,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                Center(
+                  child: TextButton(
+                      onPressed: () { Navigator.pushNamed(context, '/location'); },
+                      child: const Text(
+                        "Enter as guest",
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.redAccent,
+                            fontSize: 15
+                        ),
+                      )
+                    ),
+                  ),
               ],
             )
         ),
