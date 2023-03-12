@@ -31,7 +31,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   child: const FittedBox(
                     fit: BoxFit.fill,
                     child: Image(
-                      image: AssetImage("images/map.png"),
+                      image: AssetImage("assets/images/map.png"),
                     ),
                   ),
                 ),
@@ -65,7 +65,7 @@ class _LocationScreenState extends State<LocationScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Image(
-                              image: AssetImage("images/bigSearch.png"),
+                              image: AssetImage("assets/images/bigSearch.png"),
                               height: 30,
                               width: 30,
                             ),
@@ -175,7 +175,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Image(
-                      image: AssetImage("images/arrow.png"),
+                      image: AssetImage("assets/images/arrow.png"),
                     ),
                   ),
                   Container(
@@ -204,7 +204,7 @@ class _LocationScreenState extends State<LocationScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Image(
-                            image: AssetImage("images/search.png"),
+                            image: AssetImage("assets/images/search.png"),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -231,7 +231,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Image(
-                      image: AssetImage("images/save.png"),
+                      image: AssetImage("assets/images/save.png"),
                     ),
                   ),
                 ],
@@ -249,7 +249,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Image(
-                  image: AssetImage("images/location.png"),
+                  image: AssetImage("assets/images/location.png"),
                 ),
               ),
               Container(height: 50)
@@ -287,7 +287,7 @@ class _LocationScreenState extends State<LocationScreen> {
                   fit: BoxFit.fill,
                   child: Image(
                     image:
-                    AssetImage("images/burger1.png"),
+                    AssetImage("assets/images/burger1.png"),
                   ),
                 ),
               ),
@@ -333,7 +333,7 @@ class _LocationScreenState extends State<LocationScreen> {
             width: 60,
             height: 40,
             child: Image(
-              image: AssetImage("images/favorite.png"),
+              image: AssetImage("assets/images/favorite.png"),
             ),
           ),
         ],

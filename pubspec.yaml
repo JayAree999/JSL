@@ -28,9 +28,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-      - assets/images/locimage.png
-      - assets/images/backimage.png
-      - assets/images/logo_transparent.png
+      - assets/images/
+
 
   # fonts:
   #   - family: Schyler
