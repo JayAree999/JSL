@@ -1,3 +1,5 @@
+import 'package:eat_local/LocationScreenn.dart';
+import 'package:eat_local/RestaurantScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
@@ -17,6 +19,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
         '/saved': (context) => SavedPage(),
+        '/location': (context) => LocationScreen(),
+        '/restaurant': (context) => RestaurantScreen(),
       }
     );
   }
