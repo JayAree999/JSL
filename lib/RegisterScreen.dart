@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -8,28 +10,20 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  late FirebaseAuth _auth;
+  String email = '';
+  String password = '';
+  String confirmPassword = '';
 
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter a password';
-    }
-    if (_confirmPasswordController.text != value) {
-      return 'Passwords do not match';
-    }
-    return null;
+  @override
+  void initState() {
+    super.initState();
+    initFirebase();
   }
 
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
-    if (_passwordController.text != value) {
-      return 'Passwords do not match';
-    }
-    return null;
+  void initFirebase() async {
+    await Firebase.initializeApp();
+    _auth = FirebaseAuth.instance;
   }
 
   @override
@@ -62,6 +56,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(35, 20, 35, 25),
                     child: TextField(
+                      onChanged: (value) {
+                        email = value;
+                      },
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -82,7 +79,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(35, 0, 35, 25),
                     child: TextField(
-                      controller: _passwordController,
+                      onChanged: (value) {
+                        password = value;
+                      },
                       obscureText: true,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -104,7 +103,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(35, 0, 35, 30),
                     child: TextField(
-                      controller: _confirmPasswordController,
+                      onChanged: (value) {
+                        confirmPassword = value;
+                      },
                       obscureText: true,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -125,7 +126,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+
+                      if (password != confirmPassword) {
+                        return;
+                      }
+
+                      try {
+                        final newUser = await _auth.createUserWithEmailAndPassword(
+                            email: email, password: password);
+                      } catch (e) {
+                        print(e);
+                      }
+
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Registration successful!'),

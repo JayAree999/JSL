@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -8,8 +10,21 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
+  late FirebaseAuth _auth;
+  String email = '';
+  String password = '';
   bool isChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initFirebase();
+  }
+
+  void initFirebase() async {
+    await Firebase.initializeApp();
+    _auth = FirebaseAuth.instance;
+  }
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -53,6 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(35, 20, 35, 25),
                     child: TextField(
+                      onChanged: (value) {
+                        email = value;
+                      },
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -73,6 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                     margin: const EdgeInsets.fromLTRB(35, 0, 35, 10),
                     child: TextField(
+                      onChanged: (value) {
+                        password = value;
+                      },
                       obscureText: true,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -109,8 +130,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/saved');
+                    onPressed: () async {
+                      try{
+                        final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+                        if (user != null) {
+                          print("$email is in.");
+                          Navigator.pushNamed(context, '/saved');
+                        } else {
+                          print("Login failed");
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, backgroundColor: Colors.redAccent,

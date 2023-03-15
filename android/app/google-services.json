@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "175260083230",
+    "project_id": "eatlocal-264cc",
+    "storage_bucket": "eatlocal-264cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175260083230:android:aea7571ed0542658fc3a0f",
+        "android_client_info": {
+          "package_name": "com.example.eat_local"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "175260083230-i719qj791fdjl7bbf7j081qo534nti95.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCjlUsXz1anxPB5DFGpYFznV38tBlpSLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "175260083230-i719qj791fdjl7bbf7j081qo534nti95.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
