@@ -1,9 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'LocationScreenn.dart';
 import 'LoginScreen.dart';
 
 class SavedHeader extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _signOut() async {
+    await _auth.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -56,8 +64,9 @@ class SavedHeader extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 10, right: 20),
             child: GestureDetector(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                await _signOut();
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
@@ -81,7 +90,7 @@ class SavedHeader extends StatelessWidget {
                     Radius.circular(10),
                   ),
                   child: Image.asset(
-                    'assets/images/backimage.png',
+                    'assets/images/backimage.png', // Replace with your sign-out icon
                     height: 50,
                     width: 50,
                   ),
