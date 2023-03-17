@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
 import 'package:eat_local/RegisterScreen.dart';
+import 'package:eat_local/CalorieTracker.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/saved': (context) => SavedPage(),
         '/location': (context) => LocationScreen(),
         '/restaurant': (context) => RestaurantScreen(),
+        '/calorie': (context) => CalorieTracker(),
       },
       builder: (context, child) {
         return ScrollConfiguration(
