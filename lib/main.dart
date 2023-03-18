@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eat_local/FirebasePlacesRetriever.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:eat_local/LocationScreenn.dart';
@@ -12,7 +13,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
+
 }
 
 class MyBehavior extends ScrollBehavior {
@@ -39,6 +43,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
+        '/place': (context) => FirebaseDemo(),
         '/register': (context) => const RegisterScreen(),
         '/saved': (context) => SavedPage(),
         '/location': (context) => const LocationScreen(startingPlace: null,),
