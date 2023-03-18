@@ -5,6 +5,9 @@ import 'SavedHeader.dart';
 import 'SavedButtons.dart';
 import 'SavedRestaurantList.dart';
 import 'SavedPlaceList.dart';
+import 'CalorieButton.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SavedPage extends StatefulWidget {
   @override
   _SavedPageState createState() => _SavedPageState();
@@ -19,49 +22,57 @@ class _SavedPageState extends State<SavedPage> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    return false; // Disables the back button
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SavedHeader(),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SavedButtons(
-                    onToggle: _toggleList,
-                    isRestaurantListSelected: _isRestaurantListSelected,
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SavedHeader(),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SavedButtons(
+                      onToggle: _toggleList,
+                      isRestaurantListSelected: _isRestaurantListSelected,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  CalorieButton(),
+                ],
+              ),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  _isRestaurantListSelected
+                      ? 'Saved Restaurants'
+                      : 'Saved Places',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(width: 10),
-              ],
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                _isRestaurantListSelected ? 'Saved Restaurants' : 'Saved Places',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: _isRestaurantListSelected
-                  ? SavedRestaurantList()
-                  : SavedPlaceList(),
-            ),
-          ],
+              SizedBox(height: 20),
+              Expanded(
+                child: _isRestaurantListSelected
+                    ? SavedRestaurantList()
+                    : SavedPlaceList(),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
-
 }

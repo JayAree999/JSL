@@ -1,3 +1,4 @@
+import 'package:eat_local/SavedPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,6 +25,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void initFirebase() async {
     await Firebase.initializeApp();
     _auth = FirebaseAuth.instance;
+    final user = _auth.currentUser;
+    if (user != null) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => SavedPage()),
+          (Route<dynamic> route) => false);
+    }
   }
 
   Color getColor(Set<MaterialState> states) {
@@ -89,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                 ),
                 Container(
-                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 10),
+                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 25),
                     child: TextField(
                       onChanged: (value) {
                         password = value;
@@ -112,22 +120,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     )
                 ),
-                Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(25, 0, 0, 0),
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (bool? value) {setState(() {isChecked = value!;});},
-                        checkColor: Colors.white,
-                        fillColor: MaterialStateProperty.resolveWith(getColor),
-                      ),
-                    ),
-                    const Text(
-                      "Keep me logged in",
-                    ),
-                  ],
-                ),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -136,11 +128,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (user != null) {
                           print("$email is in.");
                           Navigator.pushNamed(context, '/saved');
-                        } else {
-                          print("Login failed");
                         }
                       } catch (e) {
-                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('E-mail or password is incorrect.'),
+                              duration: Duration(seconds: 3), // Change the duration as needed
+                            ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

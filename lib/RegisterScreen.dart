@@ -127,27 +127,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
-
-                      if (password != confirmPassword) {
-                        return;
+                      if (password.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Password must be at least 6 characters.'),
+                            duration: Duration(seconds: 3), // Change the duration as needed
+                          ),
+                        );
                       }
 
+                      if (password != confirmPassword) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please make sure your passwords match.'),
+                            duration: Duration(seconds: 3), // Change the duration as needed
+                          ),
+                        );
+                      }
+
+                      if (!email.contains('@') && email.length < 6) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Email entered is invalid.'),
+                            duration: Duration(seconds: 3), // Change the duration as needed
+                          ),
+                        );
+                      }
                       try {
                         final newUser = await _auth.createUserWithEmailAndPassword(
                             email: email, password: password);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Registration successful!'),
+                            duration: Duration(seconds: 3), // Change the duration as needed
+                          ),
+                        );
+
+                        Navigator.pushNamed(context, '/login');
                       } catch (e) {
-                        print(e);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('This email address is already registered.'),
+                            duration: Duration(seconds: 3), // Change the duration as needed
+                          ),
+                        );
                       }
 
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Registration successful!'),
-                          duration: Duration(seconds: 3), // Change the duration as needed
-                        ),
-                      );
-
-                      Navigator.pushNamed(context, '/login');
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
