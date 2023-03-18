@@ -8,8 +8,10 @@ import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
 import 'package:eat_local/RegisterScreen.dart';
 import 'package:eat_local/CalorieTracker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

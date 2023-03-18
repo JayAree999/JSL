@@ -6,8 +6,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 import 'NetworkUtil.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const String apiKey = "AIzaSyCUMBXvKNAgpztr62xW1OWRf92CUrbidGo";
+String apiKey = dotenv.env['API_KEY']!;
 
 Location location = Location();
 final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
