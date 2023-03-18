@@ -13,15 +13,27 @@ String apiKey = dotenv.env['API_KEY']!;
 Location location = Location();
 final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
 
-Future<GoogleMap> googleMap() async {
-  LocationData currentPosition = await location.getLocation();
+Future<GoogleMap> googleMap(Map<String, dynamic>? startingPlace) async {
+  late double lat;
+  late double lng;
+
+  if (startingPlace == null) {
+    LocationData currentPosition = await location.getLocation();
+    lat = currentPosition.latitude!;
+    lng = currentPosition.longitude!;
+  } else {
+    var startingLocation = startingPlace!['geometry']['location'];
+    lat = startingLocation['lat'];
+    lng = startingLocation['lng'];
+  }
+
   return GoogleMap(
     mapType: MapType.normal,
     myLocationEnabled: true,
     myLocationButtonEnabled: false,
     zoomControlsEnabled: false,
     initialCameraPosition: CameraPosition(
-        target: LatLng(currentPosition.latitude!, currentPosition.longitude!),
+        target: LatLng(lat, lng),
         zoom: 15
     ),
     onMapCreated: (GoogleMapController controller) {
@@ -96,9 +108,6 @@ Future<Map<String, dynamic>?> getPlaceDetails(String placeId) async {
     final parsed = json.decode(response);
     final results = parsed['result'] as Map<String, dynamic>;
 
-    // final address = results['address_components'];
-    // print('here');
-    // print(address[address.length-1]);
     return results;
   }
   return null;

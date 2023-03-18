@@ -24,7 +24,7 @@ class SavedHeader extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LocationScreen()),
+                  MaterialPageRoute(builder: (context) => const LocationScreen(startingPlace: null,)),
                 );
               },
               child: Container(

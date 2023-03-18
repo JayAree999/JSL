@@ -5,7 +5,8 @@ import 'DimissKeyboard.dart';
 import 'ApiServices/GoogleMapUtil.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({Key? key}) : super(key: key);
+  final Map<String, dynamic>? startingPlace;
+  const LocationScreen({Key? key, required this.startingPlace}) : super(key: key);
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -52,7 +53,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         height: safeHeight / 3 * 2,
                         width: width,
                         child: FutureBuilder(
-                          future: googleMap(),
+                          future: googleMap(widget.startingPlace),
                           builder: (BuildContext context,
                               AsyncSnapshot<dynamic> snapshot) {
                             if (snapshot.hasData) {
@@ -285,7 +286,6 @@ class _LocationScreenState extends State<LocationScreen> {
           if (currentPlace == null) { return; }
           MyApp.fireStore.collection('places').add(currentPlace!);
           currentPlace = null;
-          print('done');
         },
         child: Container(
           width: 50,

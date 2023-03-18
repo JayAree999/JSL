@@ -38,11 +38,11 @@ class MyApp extends StatelessWidget {
       title: 'Eat Local',
       initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/saved': (context) => SavedPage(),
-        '/location': (context) => LocationScreen(),
-        '/restaurant': (context) => RestaurantScreen(),
+        '/location': (context) => const LocationScreen(startingPlace: null,),
+        '/restaurant': (context) => const RestaurantScreen(),
         '/calorie': (context) => CalorieTracker(),
       },
       builder: (context, child) {
