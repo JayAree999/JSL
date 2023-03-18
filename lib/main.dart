@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'package:eat_local/LocationScreenn.dart';
 import 'package:eat_local/RestaurantScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
 import 'package:eat_local/RegisterScreen.dart';
+import 'package:eat_local/CalorieTracker.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,8 +22,16 @@ class MyBehavior extends ScrollBehavior {
 }
 
 class MyApp extends StatelessWidget {
+  static late FirebaseFirestore fireStore;
+
+  void initFirebase() async {
+    await Firebase.initializeApp();
+    fireStore = FirebaseFirestore.instance;
+  }
+
   @override
   Widget build(BuildContext context) {
+    initFirebase();
     return MaterialApp(
       title: 'Eat Local',
       initialRoute: '/login',
@@ -29,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/saved': (context) => SavedPage(),
         '/location': (context) => LocationScreen(),
         '/restaurant': (context) => RestaurantScreen(),
+        '/calorie': (context) => CalorieTracker(),
       },
       builder: (context, child) {
         return ScrollConfiguration(
