@@ -1,74 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class FirebaseDemo extends StatefulWidget {
-  @override
-  _FirebaseDemo createState() => _FirebaseDemo();
+import 'LocationScreenn.dart';
+
+Future<List<Map<String, dynamic>>> fetchDataFromFirestore() async {
+  CollectionReference collectionReference = FirebaseFirestore.instance.collection('places');
+  QuerySnapshot querySnapshot = await collectionReference.get();
+  List<Map<String, dynamic>> documents = querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  return documents;
 }
 
-class _FirebaseDemo extends State<FirebaseDemo> {
-  Future<List<DocumentSnapshot>> fetchPlaces() async {
-    CollectionReference collectionReference =
-    FirebaseFirestore.instance.collection('places');
-    QuerySnapshot querySnapshot = await collectionReference.get();
-    return querySnapshot.docs;
-  }
-
+class FirebaseDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<DocumentSnapshot>>(
-      future: fetchPlaces(),
-      builder: (BuildContext context, AsyncSnapshot<List<DocumentSnapshot>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          final places = snapshot.data!;
-          return ListView.builder(
-            itemCount: places.length,
-            itemBuilder: (BuildContext context, int index) {
-              final place = places[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                child: Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Icons.place),
-                    title: Text(place['name']),
-                    subtitle: Text('Address ${index + 1}'),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Geometry:'),
-                            content: SingleChildScrollView(
-                              child: Text(place['geometry'].toString()),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('Close'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Firestore Data List'),
+        ),
+        body: Center(
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: fetchDataFromFirestore(),
+            builder: (BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return _buildContent(context, snapshot);
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+    List<Map<String, dynamic>>? documents = snapshot.data;
+    if (documents != null) {
+      return ListView.builder(
+        itemCount: documents.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(documents[index]['place']['name'] ?? 'No name'),
+            subtitle: Text('Formatted address: ${documents[index]['place']['formatted_address']}'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LocationScreen(startingPlace: documents[index]['place']),
                 ),
               );
             },
           );
-        }
-      },
-    );
+        },
+      );
+    } else {
+      return const Text('No data');
+    }
   }
-
 }
