@@ -37,7 +37,9 @@ Future<GoogleMap> googleMap(Map<String, dynamic>? startingPlace) async {
         zoom: 15
     ),
     onMapCreated: (GoogleMapController controller) {
-      _controller.complete(controller);
+      if(!_controller.isCompleted){
+        _controller.complete(controller);
+      }
     },
   );
 }

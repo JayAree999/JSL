@@ -1,4 +1,5 @@
-import 'package:eat_local/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'ApiServices/AutocompleteUtil.dart';
 import 'DimissKeyboard.dart';
@@ -26,6 +27,10 @@ class _LocationScreenState extends State<LocationScreen> {
 
   // Current place
   Map<String, dynamic>? currentPlace;
+
+  // Firebase instances
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
   @override
   void dispose() {
@@ -281,10 +286,14 @@ class _LocationScreenState extends State<LocationScreen> {
     }
 
     Widget saveButton() {
-      return GestureDetector(
+      return _auth.currentUser != null ? GestureDetector(
         onTap: () {
           if (currentPlace == null) { return; }
-          MyApp.fireStore.collection('places').add(currentPlace!);
+          Map<String, dynamic> data = {
+            'userId': _auth.currentUser!.uid,
+            'place': currentPlace!
+          };
+          fireStore.collection('places').add(data);
           currentPlace = null;
         },
         child: Container(
@@ -312,7 +321,7 @@ class _LocationScreenState extends State<LocationScreen> {
             ),
           ),
         ),
-      );
+      ) : const SizedBox();
     }
 
     Widget locButton() {
