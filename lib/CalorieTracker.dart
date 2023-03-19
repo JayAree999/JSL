@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'ApiServices/FoodDatabaseUtil.dart';
-import 'ApiServices/NetworkUtil.dart';
 
 class CalorieTracker extends StatefulWidget {
   @override
@@ -11,6 +9,8 @@ class CalorieTracker extends StatefulWidget {
 class _CalorieTrackerState extends State<CalorieTracker> {
 
   List<String> foods = [];
+  List<int> calories = [];
+  int totalCalories = 0;
 
   void _addFoods(String food) {
     setState(() {
@@ -18,7 +18,19 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     });
   }
 
-  String cals = '';
+  void _addCalories(double value) {
+    setState(() {
+      calories.add(value.toInt());
+    });
+  }
+
+  void _calculateTotalCalories() {
+    int temp = 0;
+    for (var i = 0; i<calories.length; i++) {
+      temp += calories[i];
+    }
+    totalCalories = temp;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +65,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                     color: Colors.white,
                     child: Center(
                       child: Text(
-                        "1337",
+                        totalCalories.toString(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold
@@ -117,6 +129,8 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                   child: TextField(
                     onSubmitted: (value) async {
                       _addFoods(value);
+                      _addCalories(await fetchData(value));
+                      _calculateTotalCalories();
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
