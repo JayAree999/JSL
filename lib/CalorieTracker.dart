@@ -128,8 +128,8 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                   margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: TextField(
                     onSubmitted: (value) async {
-                      _addFoods(value);
                       _addCalories(await fetchData(value));
+                      _addFoods(value);
                       _calculateTotalCalories();
                     },
                     decoration: const InputDecoration(
