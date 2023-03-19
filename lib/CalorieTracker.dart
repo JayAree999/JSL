@@ -14,9 +14,18 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   void _addFoods(String food, double cals) {
     setState(() {
-      foods.add(food);
-      calories.add(cals.toInt());
-      _calculateTotalCalories();
+      if (cals == 0.0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid food item.'),
+              duration: Duration(seconds: 3), // Change the duration as needed
+            )
+        );
+      } else {
+        foods.add(food);
+        calories.add(cals.toInt());
+        _calculateTotalCalories();
+      }
     });
   }
 
@@ -148,7 +157,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                 ),
 
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                   height: 366,
                   width: double.infinity,
                   color: Colors.white,

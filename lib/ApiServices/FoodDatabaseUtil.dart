@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'NetworkUtil.dart';
@@ -21,13 +19,17 @@ Future fetchData(String query) async {
       }
   );
 
-  String? response = await NetworkUtil.fetchUrl(uri);
+  try {
+    String? response = await NetworkUtil.fetchUrl(uri);
 
-  if (response != null) {
-    var responseData = json.decode(response);
-    var nutrientsMap = responseData["hints"][0]["food"]["nutrients"];
-    final results = nutrientsMap["ENERC_KCAL"];
-    return results;
+    if (response != null) {
+      var responseData = json.decode(response);
+      var nutrientsMap = responseData["hints"][0]["food"]["nutrients"];
+      final results = nutrientsMap["ENERC_KCAL"];
+      return results;
+    }
+
+  } catch (e) {
+    return 0.0;
   }
-  return 0;
 }
