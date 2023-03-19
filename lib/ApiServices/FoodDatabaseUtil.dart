@@ -6,7 +6,7 @@ import 'NetworkUtil.dart';
 String appID = 'c73ea968';
 String apiKey = '001203d4dd20065bf95a470feb5e1b84';
 
-Future<String> fetchData(String query) async {
+Future fetchData(String query) async {
   Uri uri = Uri.https(
       "api.edamam.com",
       "/api/food-database/v2/parser",
@@ -24,8 +24,8 @@ Future<String> fetchData(String query) async {
   if (response != null) {
     var responseData = json.decode(response);
     var nutrientsMap = responseData["hints"][0]["food"]["nutrients"];
-    final results = nutrientsMap["ENERC_KCAL"] as String;
+    final results = nutrientsMap["ENERC_KCAL"];
     return results;
   }
-  return "Error";
+  return 0;
 }
