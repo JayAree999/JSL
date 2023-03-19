@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'NetworkUtil.dart';
 
-String appID = 'c73ea968';
-String apiKey = '001203d4dd20065bf95a470feb5e1b84';
+String appID = dotenv.env['FOOD_APP_ID']!;
+String apiKey = dotenv.env['FOOD_API_KEY']!;
 
 Future fetchData(String query) async {
   Uri uri = Uri.https(
