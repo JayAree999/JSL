@@ -28,16 +28,8 @@ class MyBehavior extends ScrollBehavior {
 }
 
 class MyApp extends StatelessWidget {
-  static late FirebaseFirestore fireStore;
-
-  void initFirebase() async {
-    await Firebase.initializeApp();
-    fireStore = FirebaseFirestore.instance;
-  }
-
   @override
   Widget build(BuildContext context) {
-    initFirebase();
     return MaterialApp(
       title: 'Eat Local',
       initialRoute: '/login',
