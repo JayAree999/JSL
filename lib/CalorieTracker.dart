@@ -12,15 +12,19 @@ class _CalorieTrackerState extends State<CalorieTracker> {
   List<int> calories = [];
   int totalCalories = 0;
 
-  void _addFoods(String food) {
+  void _addFoods(String food, double cals) {
     setState(() {
       foods.add(food);
+      calories.add(cals.toInt());
+      _calculateTotalCalories();
     });
   }
 
-  void _addCalories(double value) {
+  void _removeFoods(int index) {
     setState(() {
-      calories.add(value.toInt());
+      foods.removeAt(index);
+      calories.removeAt(index);
+      _calculateTotalCalories();
     });
   }
 
@@ -107,7 +111,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
           Container(
             padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
             margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
-            height: 400,
+            height: 500,
             width: 290,
             decoration: const BoxDecoration(
               color: Colors.grey,
@@ -128,9 +132,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                   margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: TextField(
                     onSubmitted: (value) async {
-                      _addCalories(await fetchData(value));
-                      _addFoods(value);
-                      _calculateTotalCalories();
+                      _addFoods(value, await fetchData(value));
                     },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -146,15 +148,24 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                 ),
 
                 Container(
-                  margin: EdgeInsets.fromLTRB(0, 10, 0, 12),
-                  height: 250,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  height: 366,
                   width: double.infinity,
                   color: Colors.white,
                   child: ListView.builder(
                     itemCount: foods.length,
                     itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(foods[index])
+                      return Card(
+                          child: ListTile(
+                            title: Text(foods[index]),
+                            subtitle: Text("~${calories[index]} Kcal."),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                _removeFoods(index);
+                              },
+                            ),
+                          )
                       );
                     },
                   )
