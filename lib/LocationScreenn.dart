@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'ApiServices/AutocompleteUtil.dart';
 import 'DimissKeyboard.dart';
 import 'ApiServices/GoogleMapUtil.dart';
@@ -25,6 +28,9 @@ class _LocationScreenState extends State<LocationScreen> {
   bool showSearchItems = false;
   List<AutocompletePrediction> predictions = [];
 
+  // GoogleMap controller
+  final Completer<GoogleMapController> mapController = Completer<GoogleMapController>();
+
   // Current place
   Map<String, dynamic>? currentPlace;
 
@@ -32,9 +38,14 @@ class _LocationScreenState extends State<LocationScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
+  // Dropdown
+  final List<String> list = ['1 km', '5 km', '10 km', '20 km'];
+  String? dropdownValue;
+
   @override
   void dispose() {
     searchController.dispose();
+    mapController.future.then((value) => value.dispose());
     super.dispose();
   }
 
@@ -58,7 +69,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         height: safeHeight / 3 * 2,
                         width: width,
                         child: FutureBuilder(
-                          future: googleMap(widget.startingPlace),
+                          future: GoogleMapUtil.googleMap(widget.startingPlace, mapController),
                           builder: (BuildContext context,
                               AsyncSnapshot<dynamic> snapshot) {
                             if (snapshot.hasData) {
@@ -121,17 +132,11 @@ class _LocationScreenState extends State<LocationScreen> {
                                   ],
                                   color: const Color(0xfffffcfc),
                                 ),
-                                child: const Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
                                   child: Opacity(
                                     opacity: 0.50,
-                                    child: Text(
-                                      "Select Distance",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                      ),
-                                    ),
+                                    child: distanceDropdown(),
                                   ),
                                 ),
                               ),
@@ -250,7 +255,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: TextField(
                   onChanged: (text) {
                     if (text.isNotEmpty) {
-                      placeAutocomplete(text).then((value) {
+                      GoogleMapUtil.placeAutocomplete(text).then((value) {
                         setState(() {
                           predictions = value;
                           showSearchItems = true;
@@ -326,7 +331,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
     Widget locButton() {
       return GestureDetector(
-        onTap: currentLocation,
+        onTap: () => GoogleMapUtil.currentLocation(mapController),
         child: Container(
           width: 70,
           height: 50,
@@ -491,12 +496,12 @@ class _LocationScreenState extends State<LocationScreen> {
                   return GestureDetector(
                     onTap: () async {
                       // Get place location
-                      final placeDetails = await getPlaceDetails(predictions[index].placeId!);
+                      final placeDetails = await GoogleMapUtil.getPlaceDetails(predictions[index].placeId!);
                       if (placeDetails == null) { return; }
 
                       // Move Camera
                       final location = placeDetails['geometry']['location'];
-                      changeLocation(location['lat'], location['lng']);
+                      GoogleMapUtil.changeLocation(location['lat'], location['lng'], mapController);
 
                       // Hide suggestion box
                       setState(() {
@@ -514,5 +519,36 @@ class _LocationScreenState extends State<LocationScreen> {
                   );
                 }) : const Center(child: Text("No Suggestion")),
           ));
+  }
+
+  Widget distanceDropdown() {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_drop_down),
+      elevation: 16,
+      style: const TextStyle(color: Colors.black),
+      hint: const Text(
+        "Select Distance",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 15,
+        ),
+      ),
+      isExpanded: true,
+      underline: Container(),
+      onChanged: (String? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+        });
+      },
+      items: list.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
   }
 }
