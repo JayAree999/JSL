@@ -27,6 +27,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
   List<int> calories = [];
   int totalCalories = 0;
   int dailyAverage = 0;
+  int weeklyTotal = 0;
 
   @override
   void initState() {
@@ -62,6 +63,12 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         _weeklyAverage().then((avg) {
           setState(() {
             dailyAverage = avg;
+          });
+        });
+
+        _weeklyTotal().then((total) {
+          setState(() {
+            weeklyTotal = total;
           });
         });
 
@@ -102,11 +109,10 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     return todaysCalories;
   }
 
-  Future<int> _weeklyAverage() async {
-    int weeklyAverage = 0;
+  Future<int> _weeklyTotal() async {
     int weeklyTotal = 0;
-
     int lastIndex = await _getNumOfFields() - 1;
+
     DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
         .collection('calorie tracker')
         .doc(_currentUser?.email)
@@ -117,16 +123,31 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         int ithDayValue = snapshot.get('day ${lastIndex - i} total');
         weeklyTotal += ithDayValue;
       }
-      weeklyAverage = weeklyTotal ~/ 7;
-      return weeklyAverage;
+      return weeklyTotal;
     } else {
       for (var i = lastIndex; i >= 0; i--) {
         int ithDayValue = snapshot.get('day ${lastIndex - i} total');
         weeklyTotal += ithDayValue;
       }
-      weeklyAverage = weeklyTotal ~/ lastIndex;
-      return weeklyAverage;
+      return weeklyTotal;
     }
+  }
+
+  Future<int> _weeklyAverage() async {
+    int weeklyTotal = await _weeklyTotal();
+
+    int totalDays = await _getNumOfFields();
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('calorie tracker')
+        .doc(_currentUser?.email)
+        .get();
+
+    if (totalDays < 7) {
+      return weeklyTotal ~/ totalDays;
+    } else {
+      return weeklyTotal ~/ 7;
+    }
+
   }
 
   void _updateTotal() async {
@@ -199,10 +220,10 @@ class _CalorieTrackerState extends State<CalorieTracker> {
             Center(
               child: Container(
                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                height: 225,
-                width: 290,
+                height: 300,
+                width: 360,
                 decoration: const BoxDecoration(
-                  color: Colors.grey,
+                  color: Colors.redAccent,
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
                 child: Column(
@@ -211,6 +232,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       child: Text(
                         "Today's Calories",
                         style: TextStyle(
+                            color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold
                         ),
@@ -237,6 +259,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       child: Text(
                         "Daily average this week",
                         style: TextStyle(
+                          color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold
                         ),
@@ -259,6 +282,33 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                         ),
                       ),
                     ),
+                    const Center(
+                      child: Text(
+                        "This week's total",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 12),
+                        height: 48,
+                        width: 112,
+                        color: Colors.white,
+                        child: Center(
+                          child: Text(
+                            weeklyTotal.toString(),
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -266,22 +316,23 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
 
             Container(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-              margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
               height: 500,
-              width: 290,
+              width: 360,
               decoration: const BoxDecoration(
-                color: Colors.grey,
+                color: Colors.redAccent,
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
                 children: [
                   const Center(
                       child: Text(
-                        "What did you eat today?",
+                        "Track today's meals",
                         style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       )
                   ),
@@ -319,7 +370,10 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                   Container(
                       height: 366,
                       width: double.infinity,
-                      color: Colors.white,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
                       child: ListView.builder(
                         itemCount: foods.length,
                         itemBuilder: (context, index) {
