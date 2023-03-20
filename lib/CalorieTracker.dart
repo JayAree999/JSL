@@ -47,6 +47,24 @@ class _CalorieTrackerState extends State<CalorieTracker> {
           });
         });
 
+        _getUserCalories().then((cals) {
+          setState(() {
+            calories = cals;
+          });
+        });
+
+        _getTodaysCalories().then((cals) {
+          setState(() {
+            totalCalories = cals;
+          });
+        });
+
+        _weeklyAverage().then((avg) {
+          setState(() {
+            dailyAverage = avg;
+          });
+        });
+
       });
     });
 
@@ -63,11 +81,25 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     final List<String> meals = mealsDynamic.map((e) => e.toString()).toList();
     return meals;
   }
+
+  Future<List<int>> _getUserCalories() async {
+    DocumentSnapshot snapshot = await _firestore.collection('meal tracker'). doc(_currentUser?.email).get();
+    List<int> caloriesList = snapshot.get('calories').cast<int>();
+    return caloriesList;
+  }
   
-  void _dummyAdd() async {
-    await _firestore.collection('meal tracker').doc(_currentUser?.email).set({
-      'meals' : ['Pad Thai', 'Pizza', 'WHAttttttt']
+  void _updateMealTracker() async {
+    await _firestore.collection('meal tracker').doc(_currentUser?.email).update({
+      'meals' : foods,
+      'calories' : calories
     });
+  }
+  
+  Future<int> _getTodaysCalories() async {
+    int lastDay = await _getNumOfFields() - 1;
+    DocumentSnapshot snapshot = await _firestore.collection('calorie tracker').doc(_currentUser?.email).get();
+    int todaysCalories = snapshot.get('day $lastDay total');
+    return todaysCalories;
   }
 
   Future<int> _weeklyAverage() async {
@@ -135,11 +167,12 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         foods.add(food);
         calories.add(cals.toInt());
         _calculateTotalCalories();
+        _updateMealTracker();
       }
     });
   }
 
-  void _removeFoods(int index) {
+  void _removeFoods(int index) async {
     setState(() {
       foods.removeAt(index);
       calories.removeAt(index);
@@ -293,11 +326,12 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                           return Card(
                               child: ListTile(
                                 title: Text(foods[index]),
-                                // subtitle: Text("~${calories[index]} Kcal."),
+                                subtitle: Text("~${calories[index]} Kcal."),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     _removeFoods(index);
+                                    _updateMealTracker();
                                   },
                                 ),
                               )
