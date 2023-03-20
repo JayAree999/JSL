@@ -8,13 +8,16 @@ class SavedPlaceList extends StatefulWidget {
   @override
   _SavedPlaceListState createState() => _SavedPlaceListState();
 }
+
 String currentUserId = '';
+
 class _SavedPlaceListState extends State<SavedPlaceList> {
   @override
   void initState() {
     super.initState();
     _getCurrentUserId();
   }
+
   void _getCurrentUserId() async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final user = await _auth.currentUser?.uid;
@@ -28,7 +31,10 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('places').where("userId", isEqualTo: currentUserId).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('places')
+          .where("userId", isEqualTo: currentUserId)
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -40,9 +46,11 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              Map<String, dynamic> place = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              Map<String, dynamic> place =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -59,18 +67,24 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                   child: ListTile(
                     leading: Icon(Icons.place),
                     title: Text(place['place']['name'] ?? 'No name'),
-                    subtitle: Flexible(
-                      child: Text(
-                        'Formatted address: ${place['place']['formatted_address'] ?? 'No address'}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    subtitle: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'Formatted address: ${place['place']['formatted_address'] ?? 'No address'}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      ],
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LocationScreen(startingPlace: place['place']),
+                          builder: (context) =>
+                              LocationScreen(startingPlace: place['place']),
                         ),
                       );
                     },
@@ -84,4 +98,3 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
     );
   }
 }
-
