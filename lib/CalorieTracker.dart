@@ -21,7 +21,7 @@ class CalorieTracker extends StatefulWidget {
 
 class _CalorieTrackerState extends State<CalorieTracker> {
   User? _currentUser;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late FirebaseFirestore _firestore;
 
   List<String> foods = [];
   List<int> calories = [];
@@ -36,10 +36,38 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         _currentUser = user;
       });
     });
+
+    getFirestore().then((firestore) {
+      setState(() {
+        _firestore = firestore!;
+
+        _getUserMeals().then((meals) {
+          setState(() {
+            foods = meals;
+          });
+        });
+
+      });
+    });
+
+
   }
 
   void _updateDailyAverage() async {
     dailyAverage = await _weeklyAverage();
+  }
+
+  Future<List<String>> _getUserMeals() async {
+    DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
+    List<dynamic> mealsDynamic = snapshot.get('meals');
+    final List<String> meals = mealsDynamic.map((e) => e.toString()).toList();
+    return meals;
+  }
+  
+  void _dummyAdd() async {
+    await _firestore.collection('meal tracker').doc(_currentUser?.email).set({
+      'meals' : ['Pad Thai', 'Pizza', 'WHAttttttt']
+    });
   }
 
   Future<int> _weeklyAverage() async {
@@ -69,7 +97,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     }
   }
 
-
   void _updateTotal() async {
     int index = await _getNumOfFields();
     _firestore.collection('calorie tracker').doc(_currentUser?.email).update({'day ${index-1} total': totalCalories});
@@ -95,8 +122,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     }
   }
 
-
-
   void _addFoods(String food, double cals) {
     setState(() {
       if (cals == 0.0) {
@@ -110,7 +135,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         foods.add(food);
         calories.add(cals.toInt());
         _calculateTotalCalories();
-        // _updateTotal();
       }
     });
   }
@@ -269,7 +293,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                           return Card(
                               child: ListTile(
                                 title: Text(foods[index]),
-                                subtitle: Text("~${calories[index]} Kcal."),
+                                // subtitle: Text("~${calories[index]} Kcal."),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {

@@ -7,3 +7,7 @@ final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 Future<User?> getCurrentUser() async {
   return _auth.currentUser;
 }
+
+Future<FirebaseFirestore?> getFirestore() async {
+  return _firestore;
+}
