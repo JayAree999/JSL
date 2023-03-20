@@ -7,9 +7,8 @@ import 'package:eat_local/firebase_auth.dart';
 
 /*
 TODO:
-  update total whenever the user adds or deletes from the list [DONE]
   add a new entry once a day automatically
-  display the average of the past 7 entries as weekly average
+  wipe meal tracker at the same time as adding a new entry to calorie tracker
  */
 
 class CalorieTracker extends StatefulWidget {
@@ -37,7 +36,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
         _currentUser = user;
       });
     });
-
     getFirestore().then((firestore) {
       setState(() {
         _firestore = firestore!;
@@ -71,7 +69,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
             weeklyTotal = total;
           });
         });
-
       });
     });
 
@@ -84,13 +81,30 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   Future<List<String>> _getUserMeals() async {
     DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
-    List<dynamic> mealsDynamic = snapshot.get('meals');
-    final List<String> meals = mealsDynamic.map((e) => e.toString()).toList();
-    return meals;
+
+    try {
+
+      List<dynamic> mealsDynamic = snapshot.get('meals');
+      final List<String> meals = mealsDynamic.map((e) => e.toString()).toList();
+      return meals;
+
+    } catch (e) {
+      print(e);
+    } finally {
+      print("CREATING MEAL TRACKER DOCUMENT");
+      await _firestore.collection('meal tracker').doc(_currentUser?.email).set(
+        {
+          'meals' : foods,
+          'calories' : calories
+        }
+      );
+    }
+
+    return [];
   }
 
   Future<List<int>> _getUserCalories() async {
-    DocumentSnapshot snapshot = await _firestore.collection('meal tracker'). doc(_currentUser?.email).get();
+    DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
     List<int> caloriesList = snapshot.get('calories').cast<int>();
     return caloriesList;
   }
@@ -103,10 +117,22 @@ class _CalorieTrackerState extends State<CalorieTracker> {
   }
   
   Future<int> _getTodaysCalories() async {
-    int lastDay = await _getNumOfFields() - 1;
+    int lastDay = await _getNumOfFields();
     DocumentSnapshot snapshot = await _firestore.collection('calorie tracker').doc(_currentUser?.email).get();
-    int todaysCalories = snapshot.get('day $lastDay total');
-    return todaysCalories;
+    try {
+      int todaysCalories = snapshot.get('day ${lastDay - 1} total');
+      return todaysCalories;
+    } catch (e) {
+      print(e);
+    } finally {
+      print("CREATING CALORIE TRACKER DOCUMENT");
+      await _firestore.collection('calorie tracker').doc(_currentUser?.email).set(
+        {
+          'day 0 total': 0
+        }
+      );
+    }
+    return 0;
   }
 
   Future<int> _weeklyTotal() async {
