@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eat_local/FirebasePlacesRetriever.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:eat_local/CalorieTracker.dart';
 import 'package:eat_local/LocationScreenn.dart';
 import 'package:eat_local/RestaurantScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
 import 'package:eat_local/RegisterScreen.dart';
-import 'package:eat_local/CalorieTracker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
@@ -16,7 +15,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
-
 }
 
 class MyBehavior extends ScrollBehavior {
