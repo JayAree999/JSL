@@ -24,7 +24,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   List<String> foods = [];
   List<int> calories = [];
-  int totalCalories = 0;
+  int todaysCalories = 0;
   int dailyAverage = 0;
   int weeklyTotal = 0;
 
@@ -40,46 +40,48 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       setState(() {
         _firestore = firestore!;
 
-        _getUserMeals().then((meals) {
+        _getFirebaseListOfMeals().then((meals) {
           setState(() {
             foods = meals;
           });
         });
 
-        _getUserCalories().then((cals) {
+        _getFirebaseListOfCalories().then((cals) {
           setState(() {
             calories = cals;
           });
         });
 
-        _getTodaysCalories().then((cals) {
+        _getFirebaseTodaysCalories().then((cals) {
           setState(() {
-            totalCalories = cals;
-          });
-        });
+            todaysCalories = cals;
 
-        _weeklyAverage().then((avg) {
-          setState(() {
-            dailyAverage = avg;
-          });
-        });
+            _calculateWeeklyTotal().then((total) {
+              setState(() {
+                weeklyTotal = total;
 
-        _weeklyTotal().then((total) {
-          setState(() {
-            weeklyTotal = total;
+                _calculateWeeklyAverage().then((avg) {
+                  setState(() {
+                    dailyAverage = avg;
+                  });
+                });
+              });
+            });
           });
         });
       });
     });
-
-
   }
 
   void _updateDailyAverage() async {
-    dailyAverage = await _weeklyAverage();
+    dailyAverage = await _calculateWeeklyAverage();
+  }
+  
+  void _updateWeeklyTotal() async {
+    weeklyTotal = await _calculateWeeklyTotal();
   }
 
-  Future<List<String>> _getUserMeals() async {
+  Future<List<String>> _getFirebaseListOfMeals() async {
     DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
 
     try {
@@ -90,33 +92,31 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
     } catch (e) {
       print(e);
-    } finally {
       print("CREATING MEAL TRACKER DOCUMENT");
       await _firestore.collection('meal tracker').doc(_currentUser?.email).set(
-        {
-          'meals' : foods,
-          'calories' : calories
-        }
+          {
+            'meals' : foods,
+            'calories' : calories
+          }
       );
     }
-
     return [];
   }
 
-  Future<List<int>> _getUserCalories() async {
+  Future<List<int>> _getFirebaseListOfCalories() async {
     DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
     List<int> caloriesList = snapshot.get('calories').cast<int>();
     return caloriesList;
   }
   
-  void _updateMealTracker() async {
+  void _updateFirebaseMealTracker() async {
     await _firestore.collection('meal tracker').doc(_currentUser?.email).update({
       'meals' : foods,
       'calories' : calories
     });
   }
   
-  Future<int> _getTodaysCalories() async {
+  Future<int> _getFirebaseTodaysCalories() async {
     int lastDay = await _getNumOfFields();
     DocumentSnapshot snapshot = await _firestore.collection('calorie tracker').doc(_currentUser?.email).get();
     try {
@@ -124,18 +124,18 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       return todaysCalories;
     } catch (e) {
       print(e);
-    } finally {
       print("CREATING CALORIE TRACKER DOCUMENT");
       await _firestore.collection('calorie tracker').doc(_currentUser?.email).set(
-        {
-          'day 0 total': 0
-        }
+          {
+            'day 0 total': 0
+          }
       );
     }
+
     return 0;
   }
 
-  Future<int> _weeklyTotal() async {
+  Future<int> _calculateWeeklyTotal() async {
     int weeklyTotal = 0;
     int lastIndex = await _getNumOfFields() - 1;
 
@@ -159,8 +159,8 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     }
   }
 
-  Future<int> _weeklyAverage() async {
-    int weeklyTotal = await _weeklyTotal();
+  Future<int> _calculateWeeklyAverage() async {
+    int weeklyTotal = await _calculateWeeklyTotal();
     int totalDays = await _getNumOfFields();
 
     if (totalDays < 7) {
@@ -170,15 +170,15 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     }
   }
 
-  void _updateTotal() async {
+  void _updateFirebaseCalorieTracker() async {
     int index = await _getNumOfFields();
-    _firestore.collection('calorie tracker').doc(_currentUser?.email).update({'day ${index-1} total': totalCalories});
+    _firestore.collection('calorie tracker').doc(_currentUser?.email).update({'day ${index-1} total': todaysCalories});
   }
 
-  void _addDaily() async {
+  void _addFirebaseDailyTotal() async {
     int index = await _getNumOfFields();
     _firestore.collection('calorie tracker').doc(_currentUser?.email).set({
-      'day ${index} total': totalCalories
+      'day ${index} total': todaysCalories
     }, SetOptions(merge: true));
   }
 
@@ -195,6 +195,14 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     }
   }
 
+  void _updateTotalCalories() {
+    int temp = 0;
+    for (var i = 0; i<calories.length; i++) {
+      temp += calories[i];
+    }
+    todaysCalories = temp;
+  }
+
   void _addFoods(String food, double cals) {
     setState(() {
       if (cals == 0.0) {
@@ -207,8 +215,19 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       } else {
         foods.add(food);
         calories.add(cals.toInt());
-        _calculateTotalCalories();
-        _updateMealTracker();
+        _updateTotalCalories();
+        _updateFirebaseMealTracker();
+        _updateFirebaseCalorieTracker();
+        _calculateWeeklyTotal().then((total) {
+          setState(() {
+            weeklyTotal = total;
+          });
+        });
+        _calculateWeeklyAverage().then((avg) {
+          setState(() {
+            dailyAverage = avg;
+          });
+        });
       }
     });
   }
@@ -217,17 +236,20 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     setState(() {
       foods.removeAt(index);
       calories.removeAt(index);
-      _calculateTotalCalories();
-      _updateTotal();
+      _updateTotalCalories();
+      _updateFirebaseMealTracker();
+      _updateFirebaseCalorieTracker();
+      _calculateWeeklyTotal().then((total) {
+        setState(() {
+          weeklyTotal = total;
+        });
+      });
+      _calculateWeeklyAverage().then((avg) {
+        setState(() {
+          dailyAverage = avg;
+        });
+      });
     });
-  }
-
-  void _calculateTotalCalories() {
-    int temp = 0;
-    for (var i = 0; i<calories.length; i++) {
-      temp += calories[i];
-    }
-    totalCalories = temp;
   }
 
   @override
@@ -266,7 +288,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                         color: Colors.white,
                         child: Center(
                           child: Text(
-                            totalCalories.toString(),
+                            todaysCalories.toString(),
                             style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
@@ -362,8 +384,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       onSubmitted: (value) async {
                         if (value.isNotEmpty) {
                           _addFoods(value, await fetchData(value));
-                          _updateTotal();
-                          _updateDailyAverage();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -405,7 +425,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                                   icon: const Icon(Icons.delete),
                                   onPressed: () async {
                                     _removeFoods(index);
-                                    _updateMealTracker();
                                   },
                                 ),
                               )
