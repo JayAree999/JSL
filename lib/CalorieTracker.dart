@@ -161,19 +161,13 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   Future<int> _weeklyAverage() async {
     int weeklyTotal = await _weeklyTotal();
-
     int totalDays = await _getNumOfFields();
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
-        .collection('calorie tracker')
-        .doc(_currentUser?.email)
-        .get();
 
     if (totalDays < 7) {
       return weeklyTotal ~/ totalDays;
     } else {
       return weeklyTotal ~/ 7;
     }
-
   }
 
   void _updateTotal() async {
