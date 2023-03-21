@@ -1,15 +1,10 @@
+import 'dart:async';
+import 'package:workmanager/workmanager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'ApiServices/FoodDatabaseUtil.dart';
 import 'package:eat_local/firebase_auth.dart';
-
-
-/*
-TODO:
-  add a new entry once a day automatically
-  wipe meal tracker at the same time as adding a new entry to calorie tracker
- */
 
 class CalorieTracker extends StatefulWidget {
   const CalorieTracker({super.key});
@@ -73,19 +68,29 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     });
   }
 
-  void _updateDailyAverage() async {
-    dailyAverage = await _calculateWeeklyAverage();
+  void _addFirebaseDailyTotal() async {
+    int index = await _getNumOfFields();
+    _firestore.collection('calorie tracker').doc(_currentUser?.email).set({
+      'day ${index} total': todaysCalories
+    }, SetOptions(merge: true));
   }
-  
-  void _updateWeeklyTotal() async {
-    weeklyTotal = await _calculateWeeklyTotal();
+
+  void _clearFirebaseMealTracker() async {
+    await _firestore.collection('meal tracker').doc(_currentUser?.email).set(
+      {
+        'meals' : [],
+        'calories' : []
+      }
+    );
+    setState(() {
+      todaysCalories = 0;
+    });
   }
 
   Future<List<String>> _getFirebaseListOfMeals() async {
     DocumentSnapshot snapshot = await _firestore.collection('meal tracker').doc(_currentUser?.email).get();
 
     try {
-
       List<dynamic> mealsDynamic = snapshot.get('meals');
       final List<String> meals = mealsDynamic.map((e) => e.toString()).toList();
       return meals;
@@ -173,13 +178,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
   void _updateFirebaseCalorieTracker() async {
     int index = await _getNumOfFields();
     _firestore.collection('calorie tracker').doc(_currentUser?.email).update({'day ${index-1} total': todaysCalories});
-  }
-
-  void _addFirebaseDailyTotal() async {
-    int index = await _getNumOfFields();
-    _firestore.collection('calorie tracker').doc(_currentUser?.email).set({
-      'day ${index} total': todaysCalories
-    }, SetOptions(merge: true));
   }
 
   Future<int> _getNumOfFields() async {
