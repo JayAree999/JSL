@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:workmanager/workmanager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,34 +66,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       });
     });
   }
-
-  void callbackDispatcher() {
-    Workmanager workmanager = Workmanager();
-    workmanager.executeTask((taskName, inputData) async {
-      if (taskName == "addFirebaseDailyTotalTask") {
-        _addFirebaseDailyTotal();
-      } else if (taskName == "clearFirebaseMealTrackerTask") {
-        _clearFirebaseMealTracker();
-      }
-      return Future.value(true);
-    });
-  }
-
-  void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-    await Workmanager().registerPeriodicTask(
-      "firebaseDailyTotal",
-      "add daily total to Firebase",
-      frequency: Duration(seconds: 20),
-    );
-    await Workmanager().registerPeriodicTask(
-      "clearMealTracker",
-      "clear meal tracker at the end of each day",
-      frequency: Duration(seconds: 20),
-    );
-  }
-
   void _addFirebaseDailyTotal() async {
     int index = await _getNumOfFields();
     _firestore.collection('calorie tracker').doc(_currentUser?.email).set({
