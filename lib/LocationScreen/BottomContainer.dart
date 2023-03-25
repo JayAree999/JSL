@@ -46,10 +46,10 @@ class _BottomContainerState extends State<BottomContainer> {
           child: Column(
             children: [
               const SizedBox(
-                height: 20,
+                height: 25,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     decoration: BoxDecoration(
@@ -61,30 +61,39 @@ class _BottomContainerState extends State<BottomContainer> {
                       width: 30,
                     ),
                   ),
-                  Container(
-                    width: 256,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x3f000000),
-                          blurRadius: 4,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                      color: const Color(0xfffffcfc),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Opacity(
-                        opacity: 0.50,
-                        child: distanceDropdown(),
-                      ),
+                  const SizedBox(width: 20),
+                  // Container(
+                  //   width: 256,
+                  //   height: 40,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(10),
+                  //     border: Border.all(
+                  //       color: Colors.black,
+                  //       width: 1,
+                  //     ),
+                  //     boxShadow: const [
+                  //       BoxShadow(
+                  //         color: Color(0x3f000000),
+                  //         blurRadius: 4,
+                  //         offset: Offset(0, 4),
+                  //       ),
+                  //     ],
+                  //     color: const Color(0xfffffcfc),
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(10),
+                  //     child: Opacity(
+                  //       opacity: 0.50,
+                  //       child: distanceDropdown(),
+                  //     ),
+                  //   ),
+                  // ),
+                  const Text(
+                    "Nearby Restaurants",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                 ],
