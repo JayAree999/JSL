@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'LocationScreenn.dart';
+import 'LocationScreen/LocationProvider.dart';
 
 Future<List<Map<String, dynamic>>> fetchDataFromFirestore() async {
   CollectionReference collectionReference = FirebaseFirestore.instance.collection('places');

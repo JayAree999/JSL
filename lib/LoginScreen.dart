@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eat_local/ApiServices/RestaurantUtil.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     initFirebase();
+    saveRestaurants();
   }
 
   void initFirebase() async {
@@ -50,143 +51,145 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: const EdgeInsets.fromLTRB(50, 30, 50, 0),
-                  child: Image.asset(
-                    'assets/images/logo_transparent.png',
-                    height: 300,
-                    width: 300,
+        body: SafeArea(
+      child: SingleChildScrollView(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(50, 30, 50, 0),
+            child: Image.asset(
+              'assets/images/logo_transparent.png',
+              height: 300,
+              width: 300,
+            ),
+          ),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: const Text(
+                "Login to your account",
+                style: TextStyle(fontSize: 30),
+              ),
+            ),
+          ),
+          Container(
+              margin: const EdgeInsets.fromLTRB(35, 20, 35, 25),
+              child: TextField(
+                onChanged: (value) {
+                  email = value;
+                },
+                decoration: InputDecoration(
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        const BorderSide(color: Colors.redAccent, width: 2.0),
                   ),
-                ),
-                 Center(
-                   child: Container(
-                     margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                     child: const Text(
-                       "Login to your account",
-                       style: TextStyle(
-                           fontSize: 30
-                       ),
-                     ),
-                   ),
-                 ),
-                Container(
-                    margin: const EdgeInsets.fromLTRB(35, 20, 35, 25),
-                    child: TextField(
-                      onChanged: (value) {
-                        email = value;
-                      },
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.person_outlined,
-                          color: Color.fromRGBO(0, 0, 0, 100),
-                        ),
-                        hintText: 'E-mail',
-                      ),
-                    )
-                ),
-                Container(
-                    margin: const EdgeInsets.fromLTRB(35, 0, 35, 25),
-                    child: TextField(
-                      onChanged: (value) {
-                        password = value;
-                      },
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.vpn_key_outlined,
-                          color: Color.fromRGBO(0, 0, 0, 100),
-                        ),
-                        hintText: 'Password',
-                      ),
-                    )
-                ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try{
-                        final user = await _auth.signInWithEmailAndPassword(email: email, password: password);
-                        if (user != null) {
-                          print("$email is in.");
-                          Navigator.pushNamed(context, '/saved');
-                        }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('E-mail or password is incorrect.'),
-                              duration: Duration(seconds: 3), // Change the duration as needed
-                            ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white, backgroundColor: Colors.redAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      elevation: 5.0,
-                    ),
-                    child: Container(
-                      width: 320,
-                      height: 55,
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        const BorderSide(color: Colors.redAccent, width: 2.0),
                   ),
-                ),
-                Center(
-                  child: TextButton(
-                    onPressed: () { Navigator.pushNamed(context, '/register'); },
-                    child: const Text(
-                      "Signup",
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.redAccent,
-                        fontSize: 15
-                      ),
-                    ),
+                  prefixIcon: const Icon(
+                    Icons.person_outlined,
+                    color: Color.fromRGBO(0, 0, 0, 100),
                   ),
+                  hintText: 'E-mail',
                 ),
-                Center(
-                  child: TextButton(
-                      onPressed: () { Navigator.pushNamed(context, '/location'); },
-                      child: const Text(
-                        "Enter as guest",
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.redAccent,
-                            fontSize: 15
-                        ),
-                      )
-                    ),
+              )),
+          Container(
+              margin: const EdgeInsets.fromLTRB(35, 0, 35, 25),
+              child: TextField(
+                onChanged: (value) {
+                  password = value;
+                },
+                obscureText: true,
+                decoration: InputDecoration(
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        const BorderSide(color: Colors.redAccent, width: 2.0),
                   ),
-              ],
-            )
-        ),
-      )
-    );
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide:
+                        const BorderSide(color: Colors.redAccent, width: 2.0),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.vpn_key_outlined,
+                    color: Color.fromRGBO(0, 0, 0, 100),
+                  ),
+                  hintText: 'Password',
+                ),
+              )),
+          Center(
+            child: ElevatedButton(
+              onPressed: () async {
+                try {
+                  final user = await _auth.signInWithEmailAndPassword(
+                      email: email, password: password);
+                  if (user != null) {
+                    print("$email is in.");
+                    Navigator.pushNamed(context, '/saved');
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('E-mail or password is incorrect.'),
+                      duration:
+                          Duration(seconds: 3), // Change the duration as needed
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 5.0,
+              ),
+              child: Container(
+                width: 320,
+                height: 55,
+                alignment: Alignment.center,
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
+            ),
+          ),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/register');
+              },
+              child: const Text(
+                "Signup",
+                style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.redAccent,
+                    fontSize: 15),
+              ),
+            ),
+          ),
+          Center(
+            child: TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/location');
+                },
+                child: const Text(
+                  "Enter as guest",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.redAccent,
+                      fontSize: 15),
+                )),
+          ),
+        ],
+      )),
+    ));
   }
 }

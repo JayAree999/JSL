@@ -2,36 +2,48 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:eat_local/ApiServices/AutocompleteUtil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 
+import '../LocationData.dart';
 import 'NetworkUtil.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/material.dart';
 
 class GoogleMapUtil {
   static String apiKey = dotenv.env['API_KEY']!;
 
-  static Location location = Location();
-
-  static Future<GoogleMap> googleMap(Map<String, dynamic>? startingPlace, Completer<GoogleMapController> mapController) async {
+  static Future<List<double>> getLatLng(Map<String, dynamic>? startingPlace) async {
     late double lat;
     late double lng;
 
     if (startingPlace == null) {
-      LocationData currentPosition = await location.getLocation();
-      lat = currentPosition.latitude!;
-      lng = currentPosition.longitude!;
+      Position currentPosition = await Geolocator.getCurrentPosition();
+      lat = currentPosition.latitude;
+      lng = currentPosition.longitude;
     } else {
-      var startingLocation = startingPlace!['geometry']['location'];
+      var startingLocation = startingPlace['geometry']['location'];
       lat = startingLocation['lat'];
       lng = startingLocation['lng'];
     }
+
+    return [lat, lng];
+  }
+
+  static Future<GoogleMap> googleMap(Map<String, dynamic>? startingPlace, Completer<GoogleMapController> mapController, BuildContext context) async {
+    LocationData provider = Provider.of<LocationData>(context);
+    List<double> latLng = await getLatLng(startingPlace);
+
+    double lat = latLng[0];
+    double lng = latLng[1];
 
     return GoogleMap(
       mapType: MapType.normal,
       myLocationEnabled: true,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
+      markers: provider.markers.where((marker) => marker != null).map((marker) => marker!).toSet(),
       initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 15),
       onMapCreated: (GoogleMapController controller) {
           mapController.complete(controller);
@@ -41,14 +53,13 @@ class GoogleMapUtil {
 
   static void currentLocation(Completer<GoogleMapController> mapController) async {
     final GoogleMapController controller = await mapController.future;
-    LocationData? currentLocation;
+    Position? currentLocation;
     try {
-      currentLocation = await location.getLocation();
+      currentLocation = await Geolocator.getCurrentPosition();
     } on Exception {
       currentLocation = null;
     }
 
-    await mapController.future.then((value) => value.getZoomLevel());
     controller.animateCamera(CameraUpdate.newCameraPosition(
       CameraPosition(
         bearing: 0,
