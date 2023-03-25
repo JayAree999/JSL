@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'package:workmanager/workmanager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'ApiServices/FoodDatabaseUtil.dart';
-import 'package:eat_local/firebase_auth.dart';
+import 'package:eat_local/Firebase_auth.dart';
 
 class CalorieTracker extends StatefulWidget {
   const CalorieTracker({super.key});
@@ -22,6 +21,8 @@ class _CalorieTrackerState extends State<CalorieTracker> {
   int todaysCalories = 0;
   int dailyAverage = 0;
   int weeklyTotal = 0;
+  final fieldText = TextEditingController();
+
 
   @override
   void initState() {
@@ -68,10 +69,14 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     });
   }
 
+  void clearText() {
+    fieldText.clear();
+  }
+
   void _addFirebaseDailyTotal() async {
     int index = await _getNumOfFields();
     _firestore.collection('calorie tracker').doc(_currentUser?.email).set({
-      'day ${index} total': todaysCalories
+      'day ${index} total': 0
     }, SetOptions(merge: true));
   }
 
@@ -297,7 +302,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                     ),
                     const Center(
                       child: Text(
-                        "Daily average this week",
+                        "Average past 7 days",
                         style: TextStyle(
                           color: Colors.white,
                             fontSize: 20,
@@ -324,7 +329,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                     ),
                     const Center(
                       child: Text(
-                        "This week's total",
+                        "Total past 7 days",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -382,6 +387,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       onSubmitted: (value) async {
                         if (value.isNotEmpty) {
                           _addFoods(value, await fetchData(value));
+                          clearText();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -390,7 +396,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                               )
                           );
                         }
-
                       },
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
@@ -402,11 +407,12 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                         ),
                         hintText: 'Enter a meal',
                       ),
+                      controller: fieldText,
                     ),
                   ),
 
                   Container(
-                      height: 366,
+                      height: 320,
                       width: double.infinity,
                       decoration: const BoxDecoration(
                         color: Colors.white,
@@ -429,6 +435,31 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                           );
                         },
                       )
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      _addFirebaseDailyTotal();
+                      _clearFirebaseMealTracker();
+                      setState(() {
+                        foods = [];
+                        calories = [];
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white, backgroundColor: Colors.pink,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      elevation: 5.0,
+                    ),
+                    child: Container(
+                      width: 300,
+                      height: 20,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "Submit today's calories and clear table",
+                      ),
+                    ),
                   ),
                 ],
               ),
