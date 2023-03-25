@@ -38,8 +38,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(
-                  child: CircularProgressIndicator(
-                      color: Color(0xffea3f30)));
+                  child: CircularProgressIndicator(color: Color(0xffea3f30)));
             }
 
             Map<String, dynamic>? restaurantDetail = snapshot.data!;
@@ -95,152 +94,21 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                   fontSize: 30,
                                 ),
                               ),
-                              restaurantDetail.containsKey('menu_q')?
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Menus",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: "Inter",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    restaurantDetail['menu_q'],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ): const SizedBox(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              restaurantDetail.containsKey('product_q')?
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Qualified Ingredients",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: "Inter",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    restaurantDetail['product_q'],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ): const SizedBox(),
-                              const SizedBox(height:20),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Location",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: "Inter",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    restaurantDetail['address'],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height:20),
-                              restaurantDetail.containsKey('tel')? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Contact",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: "Inter",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    restaurantDetail['tel'],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ): const SizedBox(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              restaurantDetail.containsKey('opentime')? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  const Text(
-                                    "Open hours",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: "Inter",
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    restaurantDetail['opentime'],
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ): const SizedBox(),
-                              const SizedBox(height:50)
+                              getInfoByField(
+                                  restaurantDetail, 'menu_q', 'Menus'),
+                              const SizedBox(height: 20),
+                              getInfoByField(restaurantDetail, 'product_q',
+                                  'Qualified Ingredients'),
+                              const SizedBox(height: 20),
+                              getInfoByField(
+                                  restaurantDetail, 'address', 'Location'),
+                              const SizedBox(height: 20),
+                              getInfoByField(
+                                  restaurantDetail, 'tel', 'Contact'),
+                              const SizedBox(height: 20),
+                              getInfoByField(
+                                  restaurantDetail, 'opentime', 'Open Hours'),
+                              const SizedBox(height: 50)
                             ],
                           ),
                         ),
@@ -254,6 +122,39 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
         ),
       ),
     );
+  }
+
+  Widget getInfoByField(
+      Map<String, dynamic> restaurantDetail, String field, String name) {
+    return restaurantDetail.containsKey(field)
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                name,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontFamily: "Inter",
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Text(
+                restaurantDetail[field],
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          )
+        : const SizedBox();
   }
 
   Widget allButtons() {

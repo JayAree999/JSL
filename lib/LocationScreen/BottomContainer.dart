@@ -220,16 +220,7 @@ class _BottomContainerState extends State<BottomContainer> {
         ));
       },
       onTap: () {
-        double lat = restaurant.latitude;
-        double lng = restaurant.longitude;
-        GoogleMapUtil.changeLocation(lat, lng, provider.mapController);
-        provider.setMarker(
-            Marker(
-                markerId: const MarkerId("restaurant place"),
-                position: LatLng(lat, lng),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueCyan)),
-            1);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantScreen(restaurant: restaurant)));
       },
       child: Container(
         height: 65,
@@ -300,20 +291,25 @@ class _BottomContainerState extends State<BottomContainer> {
               ),
             ),
             GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      RestaurantScreen(restaurant: restaurant),
-                ),
-              ),
-              child: const SizedBox(
-                  width: 60,
-                  height: 40,
-                  child: Icon(
-                    Icons.info_outline,
-                    color: Colors.grey,
-                  )),
+              onTap: () {
+                double lat = restaurant.latitude;
+                double lng = restaurant.longitude;
+                GoogleMapUtil.changeLocation(lat, lng, provider.mapController);
+                provider.setMarker(
+                    Marker(
+                        markerId: const MarkerId("restaurant place"),
+                        position: LatLng(lat, lng),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                            BitmapDescriptor.hueCyan)),
+                    1);
+                },
+                child: const SizedBox(
+                    width: 60,
+                    height: 40,
+                    child: Icon(
+                      Icons.my_location,
+                      color: Colors.grey,
+                    ))
             ),
           ],
         ),
