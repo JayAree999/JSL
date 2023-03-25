@@ -96,19 +96,14 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                               ),
                               getInfoByField(
                                   restaurantDetail, 'menu_q', 'Menus'),
-                              const SizedBox(height: 20),
                               getInfoByField(restaurantDetail, 'product_q',
                                   'Qualified Ingredients'),
-                              const SizedBox(height: 20),
                               getInfoByField(
                                   restaurantDetail, 'address', 'Location'),
-                              const SizedBox(height: 20),
                               getInfoByField(
                                   restaurantDetail, 'tel', 'Contact'),
-                              const SizedBox(height: 20),
                               getInfoByField(
                                   restaurantDetail, 'opentime', 'Open Hours'),
-                              const SizedBox(height: 50)
                             ],
                           ),
                         ),
@@ -126,13 +121,12 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
 
   Widget getInfoByField(
       Map<String, dynamic> restaurantDetail, String field, String name) {
-    return restaurantDetail.containsKey(field)
+    return restaurantDetail.containsKey(field) &&
+            restaurantDetail[field].toString().isNotEmpty
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Text(
                 name,
                 style: const TextStyle(
@@ -142,9 +136,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Text(
                 restaurantDetail[field],
                 style: const TextStyle(
@@ -152,6 +144,7 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                   fontSize: 14,
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           )
         : const SizedBox();
