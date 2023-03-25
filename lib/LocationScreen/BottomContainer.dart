@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eat_local/LocationData.dart';
+import 'package:eat_local/RestaurantScreen.dart';
 import 'package:eat_local/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -290,7 +291,13 @@ class _BottomContainerState extends State<BottomContainer> {
               ),
             ),
             GestureDetector(
-              onTap: () => Navigator.pushNamed(context, "/restaurant"),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      RestaurantScreen(restaurant: restaurant),
+                ),
+              ),
               child: const SizedBox(
                   width: 60,
                   height: 40,

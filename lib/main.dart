@@ -2,7 +2,6 @@ import 'package:eat_local/FirebasePlacesRetriever.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:eat_local/LocationScreen/LocationProvider.dart';
-import 'package:eat_local/RestaurantScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:eat_local/SavedPage.dart';
 import 'package:eat_local/LoginScreen.dart';
@@ -39,7 +38,6 @@ class MyApp extends StatelessWidget {
         '/location': (context) => const LocationScreen(
               startingPlace: null,
             ),
-        '/restaurant': (context) => const RestaurantScreen(),
         '/calorie': (context) => CalorieTracker(),
       },
       builder: (context, child) {

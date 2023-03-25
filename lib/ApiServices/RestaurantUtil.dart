@@ -59,3 +59,19 @@ Future<List<Restaurant>> getNearbyRestaurants(Map<String, dynamic>? startingPlac
 
   return db.getRestaurantsInRange(lat, lng);
 }
+
+Future<Map<String, dynamic>?> getRestaurantDetail(String branchId) async {
+  Uri uri = Uri.http("www.qrestaurant.acfs.go.th", "webapp/api/shop_detail.php", {
+    "secret": "BกVฮdบBEwqภQR89พด9Lอย4ย4คษร5กVรi",
+    "id": branchId
+  });
+
+  String? response = await NetworkUtil.fetchUrl(uri);
+
+  if (response != null) {
+    var data = json.decode(utf8.decode(response.codeUnits));
+    return data;
+  }
+
+  return null;
+}
