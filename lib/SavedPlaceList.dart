@@ -85,16 +85,11 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                         ],
                       ),
                       child: ListTile(
-                        leading: place['place']['photos'] != null &&
-                            place['place']['photos'].isNotEmpty
-                            ? FutureBuilder<String>(
-
-                          builder: (context, snapshotUrl) {
-                            if (snapshotUrl.hasData) {
-                              return Image.network(snapshotUrl.data!);
-                            } else {
-                              return Icon(Icons.image_not_supported);
-                            }
+                        leading: place['place']['photos'] != null && place['place']['photos'].isNotEmpty
+                            ? Image.network(
+                          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place['place']['photos'][0]['photo_reference']}&key=$apiKey',
+                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                            return Icon(Icons.image_not_supported);
                           },
                         )
                             : Icon(Icons.image_not_supported),
