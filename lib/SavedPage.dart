@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'CalorieTracker.dart';
 import 'SavedHeader.dart';
 import 'SavedButtons.dart';
 import 'SavedRestaurantList.dart';
@@ -14,11 +15,18 @@ class SavedPage extends StatefulWidget {
 }
 
 class _SavedPageState extends State<SavedPage> {
-  bool _isRestaurantListSelected = true;
+  bool _isRestaurantListSelected = false;
+  bool isCalorieTrackerSelected = false;
+  void toggleCalorieTracker(bool value) {
+    setState(() {
+      isCalorieTrackerSelected = value;
+    });
+  }
 
   void _toggleList(bool value) {
     setState(() {
       _isRestaurantListSelected = value;
+      isCalorieTrackerSelected = false;
     });
   }
 
@@ -43,17 +51,26 @@ class _SavedPageState extends State<SavedPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: SavedButtons(
                       onToggle: _toggleList,
+
                       isRestaurantListSelected: _isRestaurantListSelected,
+
                     ),
                   ),
                   SizedBox(width: 10),
-                  CalorieButton(),
+                  CalorieButton(
+                    onPressed: () {
+                      toggleCalorieTracker(!isCalorieTrackerSelected);
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
+                  isCalorieTrackerSelected
+                      ? 'Calorie Tracker' :
+
                   _isRestaurantListSelected
                       ? 'Saved Restaurants'
                       : 'Saved Places',
@@ -65,7 +82,9 @@ class _SavedPageState extends State<SavedPage> {
               ),
               SizedBox(height: 20),
               Expanded(
-                child: _isRestaurantListSelected
+                child: isCalorieTrackerSelected
+                    ? _buildCalorieTracker()
+                    : _isRestaurantListSelected
                     ? SavedRestaurantList()
                     : SavedPlaceList(),
               ),
@@ -75,4 +94,8 @@ class _SavedPageState extends State<SavedPage> {
       ),
     );
   }
+}
+
+Widget _buildCalorieTracker() {
+  return CalorieTracker();
 }

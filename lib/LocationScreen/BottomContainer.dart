@@ -137,7 +137,9 @@ class _BottomContainerState extends State<BottomContainer> {
                               .add(listItem(context, restaurant, distance));
                           restaurants.add(const SizedBox(height: 10));
                         }
-                        restaurants.removeLast();
+                        if (restaurants.isNotEmpty) {
+                          restaurants.removeLast();
+                        }
 
                         return Column(
                           children: restaurants,

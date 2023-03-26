@@ -32,7 +32,7 @@ class SavedButtons extends StatelessWidget {
           onPressed: () => onToggle(false),
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-              !isRestaurantListSelected ? Color(0xFFEA3F30) : Colors.white,
+              !isRestaurantListSelected ? Color(0xFFA5418A) : Colors.white,
             ),
             foregroundColor: MaterialStateProperty.all<Color>(
               !isRestaurantListSelected ? Colors.white : Color(0xFFA6A6A6),

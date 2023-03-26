@@ -257,9 +257,11 @@ class _CalorieTrackerState extends State<CalorieTracker> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
+        child: SingleChildScrollView(
         child: Column(
           children: [
             Center(
@@ -466,6 +468,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

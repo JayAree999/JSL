@@ -1,4 +1,3 @@
-import 'package:eat_local/FirebasePlacesRetriever.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:eat_local/LocationScreen/LocationProvider.dart';
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/place': (context) => FirebaseDemo(),
+
         '/register': (context) => const RegisterScreen(),
         '/saved': (context) => SavedPage(),
         '/location': (context) => const LocationScreen(
