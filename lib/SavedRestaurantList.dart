@@ -11,6 +11,7 @@ class SavedRestaurantList extends StatefulWidget {
 
 String currentUserId = '';
 
+
 class _SavedRestaurantListState extends State<SavedRestaurantList> {
   @override
   void initState() {
@@ -58,6 +59,14 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
               itemBuilder: (BuildContext context, int index) {
                 Map<String, dynamic> restaurant =
                     snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                final Map<String, dynamic> result = {
+                  "geometry": {
+                    "location": {
+                      "lat": restaurant["restaurant"]["latitude"],
+                      "lng": restaurant["restaurant"]["longitude"]
+                    }
+                  }
+                };
                 return Dismissible(
                   key: ValueKey(snapshot.data!.docs[index].id),
                   direction: DismissDirection.endToStart,
@@ -112,15 +121,17 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                               .delete();
                         },
                       ),
-                      // onTap: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) =>
-                      //           LocationScreen(startingPlace: restaurant['rest']),
-                      //     ),
-                      //   );
-                      // },
+                       onTap: () {
+                         Navigator.push(
+                           context,
+                           MaterialPageRoute(
+                             builder: (context) =>
+
+
+                               LocationScreen(startingPlace: result)
+                          ),
+                         );
+                       },
                     ),
 
                   ),

@@ -51,6 +51,7 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
               itemBuilder: (context, index) {
                 Map<String, dynamic> place =
                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
+
                 return Dismissible(
                   key: ValueKey(snapshot.data!.docs[index].id),
                   direction: DismissDirection.endToStart,
@@ -110,12 +111,15 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                             ),
                           ],
                         ),
+
                         onTap: () {
                           Navigator.push(
                             context,
+
                             MaterialPageRoute(
                               builder: (context) => LocationScreen(
                                 startingPlace: place['place'],
+
                               ),
                             ),
                           );
