@@ -53,6 +53,7 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                 snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
                 return Dismissible(
+
                   key: ValueKey(snapshot.data!.docs[index].id),
                   direction: DismissDirection.endToStart,
                   background: Container(
@@ -69,6 +70,7 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                         .delete();
                   },
                   child: Padding(
+
                     padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                     child: Container(
@@ -85,21 +87,27 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                         ],
                       ),
                       child: ListTile(
-                        leading: place['place']['photos'] != null && place['place']['photos'].isNotEmpty
-                            ? Image.network(
-                          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place['place']['photos'][0]['photo_reference']}&key=$apiKey',
-                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                            return Icon(Icons.image_not_supported);
-                          },
-                        )
-                            : Icon(Icons.image_not_supported),
+                        contentPadding: EdgeInsets.all(0), // Remove any padding from the ListTile
+                        leading: SizedBox(
+                          height: 100,
+                          width: 90,
+                          child: place['place']['photos'] != null && place['place']['photos'].isNotEmpty
+                              ? Image.network(
+                            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place['place']['photos'][0]['photo_reference']}&key=$apiKey',
+                            fit: BoxFit.cover,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              return Icon(Icons.image_not_supported);
+                            },
+                          )
+                              : Icon(Icons.image_not_supported),
+                        ),
                         title: Text(place['place']['name'] ?? 'No name'),
                         subtitle: Flex(
                           direction: Axis.horizontal,
                           children: [
                             Flexible(
                               child: Text(
-                                'Formatted address: ${place['place']['formatted_address'] ?? 'No address'}',
+                                '${place['place']['formatted_address'] ?? 'No address'}',
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                               ),

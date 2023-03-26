@@ -84,6 +84,7 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                         .delete();
                   },
                   child: Container(
+
                     margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -97,10 +98,12 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                         ),
                       ],
                     ),
+
                     child: ListTile(
 
+                      contentPadding: EdgeInsets.all(0), // Remove any padding from the ListTile
                       leading: SizedBox(
-                        height: 100,
+                        height: 120,
                         width: 90,
                         child: restaurant['restaurant']['image'] != null && isValidUrl(restaurant['restaurant']['image'])
                             ? Image.network(
