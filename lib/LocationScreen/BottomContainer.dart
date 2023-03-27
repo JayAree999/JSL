@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eat_local/LocationData.dart';
 import 'package:eat_local/RestaurantScreen.dart';
-import 'package:eat_local/firebase_auth.dart';
+import 'package:eat_local/Firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
