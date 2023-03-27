@@ -22,6 +22,8 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore fireStore = FirebaseFirestore.instance;
 
+  bool isSaved = false;
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -151,6 +153,20 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   }
 
   Widget allButtons() {
+    User? currentUser = _auth.currentUser;
+
+    fireStore
+        .collection('restaurants')
+        .where('name',
+        isEqualTo: widget.restaurant.title)
+        .where('userId',
+        isEqualTo: _auth.currentUser!.uid)
+        .get().then((value) {
+          setState(() {
+            isSaved = value.size > 0;
+          });
+    });
+
     return SizedBox(
       height: safeHeight / 3 * 2,
       width: width,
@@ -205,6 +221,9 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                 .get();
 
                             if (query.size > 0) {
+                              setState(() {
+                                isSaved = true;
+                              });
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
                                 content: Text(
@@ -230,11 +249,12 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                             ));
                           },
                           child: Container(
-                            width: 80,
-                            height: 60,
-                            padding: const EdgeInsets.only(right: 30, top: 10),
+                            width: 50,
+                            height: 50,
+                            margin: const EdgeInsets.only(right: 30),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
-                              // color: Colors.pink,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
@@ -245,12 +265,14 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                                 ),
                               ],
                             ),
-                            child: const FittedBox(
+                            child: FittedBox(
                               fit: BoxFit.fill,
-                              child: Image(
-                                image:
-                                    AssetImage("assets/images/redFavorite.png"),
-                              ),
+                              child: isSaved? const Icon(
+                                  Icons.favorite,
+                                  color: Color(0xffea3f30))
+                                  : const Icon(
+                                  Icons.favorite_border,
+                                  color: Color(0xffea3f30))
                             ),
                           ),
                         )
