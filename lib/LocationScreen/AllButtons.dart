@@ -10,7 +10,8 @@ import '../ApiServices/GoogleMapUtil.dart';
 import '../LocationData.dart';
 
 class AllButtons extends StatefulWidget {
-  const AllButtons({Key? key}) : super(key: key);
+  double addedHeight;
+  AllButtons({Key? key, required this.addedHeight}) : super(key: key);
 
   @override
   State<AllButtons> createState() => _AllButtonsState();
@@ -67,7 +68,7 @@ class _AllButtonsState extends State<AllButtons> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               locButton(context),
-              Container(height: 50)
+              Container(height: widget.addedHeight + 50)
             ],
           ),
         ],

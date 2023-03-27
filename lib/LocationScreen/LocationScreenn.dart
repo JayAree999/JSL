@@ -6,6 +6,7 @@ import 'package:eat_local/LocationData.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../DimissKeyboard.dart';
 import '../ApiServices/GoogleMapUtil.dart';
 import '../LocalDatabase/RestaurantDatabse.dart';
@@ -42,6 +43,11 @@ class _LocationScreenState extends State<LocationScreenn> {
   late Marker currentMarker;
   late Marker restaurantMarker;
 
+  // For moving location button, when the panel slides
+  late double panelMinHeight;
+  late double panelMaxHeight;
+  double addedHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -52,8 +58,7 @@ class _LocationScreenState extends State<LocationScreenn> {
       currentMarker = Marker(
           markerId: const MarkerId("current place"),
           position: LatLng(latLng[0], latLng[1]),
-          icon:
-              BitmapDescriptor.defaultMarker);
+          icon: BitmapDescriptor.defaultMarker);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -77,54 +82,46 @@ class _LocationScreenState extends State<LocationScreenn> {
     var padding = MediaQuery.of(context).viewPadding;
 
     safeHeight = height - padding.top - padding.bottom;
+    panelMinHeight = safeHeight / 3 + 30;
+    panelMaxHeight = panelMinHeight + 160;
 
     return DismissKeyboard(
       child: Scaffold(
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Stack(
+          child: SlidingUpPanel(
+            body: Stack(
               children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                        height: safeHeight / 3 * 2,
-                        width: width,
-                        child: FutureBuilder(
-                          future: GoogleMapUtil.googleMap(
-                              widget.startingPlace, mapController, context),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<dynamic> snapshot) {
-                            if (snapshot.hasData) {
-                              return snapshot.data;
-                            }
-                            return const Center(
-                                child: CircularProgressIndicator(
-                                    color: Color(0xffea3f30)));
-                          },
-                        )),
-                    const AllButtons(),
-                  ],
-                ),
-                const BottomContainer(),
-                orangeBar()
+                SizedBox(
+                    height: safeHeight / 3 * 2,
+                    width: width,
+                    child: FutureBuilder(
+                      future: GoogleMapUtil.googleMap(
+                          widget.startingPlace, mapController, context),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data;
+                        }
+                        return const Center(
+                            child: CircularProgressIndicator(
+                                color: Color(0xffea3f30)));
+                      },
+                    )),
+                AllButtons(addedHeight: addedHeight),
               ],
             ),
+            panel: const BottomContainer(),
+            minHeight: panelMinHeight,
+            maxHeight: panelMaxHeight,
+            borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            onPanelSlide: (position) {
+              setState(() {
+                final panelMaxExtent = panelMaxHeight - panelMinHeight;
+                addedHeight = position * panelMaxExtent;
+              });
+            },
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget orangeBar() {
-    return Positioned(
-      top: safeHeight / 3 * 2 - 45,
-      left: 25,
-      child: Container(
-        width: width - 50,
-        height: 25,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: const Color(0xffea3f30),
         ),
       ),
     );

@@ -32,157 +32,84 @@ class _BottomContainerState extends State<BottomContainer> {
 
     return Column(
       children: [
-        SizedBox(
-          height: provider.safeHeight / 3 * 2 - 30,
+        const SizedBox(
+          height: 25,
         ),
-        Container(
-          width: provider.width,
-          height: provider.safeHeight / 3 + 30,
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-            color: Colors.white,
-          ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 25,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Image(
-                      image: AssetImage("assets/images/bigSearch.png"),
-                      height: 30,
-                      width: 30,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  // Container(
-                  //   width: 256,
-                  //   height: 40,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     border: Border.all(
-                  //       color: Colors.black,
-                  //       width: 1,
-                  //     ),
-                  //     boxShadow: const [
-                  //       BoxShadow(
-                  //         color: Color(0x3f000000),
-                  //         blurRadius: 4,
-                  //         offset: Offset(0, 4),
-                  //       ),
-                  //     ],
-                  //     color: const Color(0xfffffcfc),
-                  //   ),
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(10),
-                  //     child: Opacity(
-                  //       opacity: 0.50,
-                  //       child: distanceDropdown(),
-                  //     ),
-                  //   ),
-                  // ),
-                  const Text(
-                    "Nearby Restaurants",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
+              child: const Image(
+                image: AssetImage("assets/images/bigSearch.png"),
                 height: 30,
+                width: 30,
               ),
-              SizedBox(
-                height: provider.safeHeight / 3 - 80,
-                child: SingleChildScrollView(
-                  primary: false,
-                  child: FutureBuilder<List<Restaurant>>(
-                      future: provider.restaurants,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          ));
-                        }
-                        if (snapshot.hasError) {
-                          return const Center(child: Text("No Restaurant"));
-                        }
+            ),
+            const SizedBox(width: 20),
+            const Text(
+              "Nearby Restaurants",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        SizedBox(
+          height: provider.safeHeight / 3 + 75,
+          child: SingleChildScrollView(
+            primary: false,
+            child: FutureBuilder<List<Restaurant>>(
+                future: provider.restaurants,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ));
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text("No Restaurant"));
+                  }
 
-                        double lat = provider.latLng[0];
-                        double lng = provider.latLng[1];
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(child: Text("No Restaurant"));
+                  }
 
-                        snapshot.data!.sort((a, b) =>
-                            Geolocator.distanceBetween(
-                                    lat, lng, a.latitude, a.longitude)
-                                .compareTo(Geolocator.distanceBetween(
-                                    lat, lng, b.latitude, b.longitude)));
+                  double lat = provider.latLng[0];
+                  double lng = provider.latLng[1];
 
-                        List<Widget> restaurants = [];
+                  snapshot.data!.sort((a, b) => Geolocator.distanceBetween(
+                          lat, lng, a.latitude, a.longitude)
+                      .compareTo(Geolocator.distanceBetween(
+                          lat, lng, b.latitude, b.longitude)));
 
-                        for (var restaurant in snapshot.data!) {
-                          double distance = Geolocator.distanceBetween(lat, lng,
-                                  restaurant.latitude, restaurant.longitude) /
-                              1000;
-                          restaurants
-                              .add(listItem(context, restaurant, distance));
-                          restaurants.add(const SizedBox(height: 10));
-                        }
-                        if (restaurants.isNotEmpty) {
-                          restaurants.removeLast();
-                        }
+                  List<Widget> restaurants = [];
 
-                        return Column(
-                          children: restaurants,
-                        );
-                      }),
-                ),
-              )
-            ],
+                  for (var restaurant in snapshot.data!) {
+                    double distance = Geolocator.distanceBetween(lat, lng,
+                            restaurant.latitude, restaurant.longitude) /
+                        1000;
+                    restaurants.add(listItem(context, restaurant, distance));
+                    restaurants.add(const SizedBox(height: 10));
+                  }
+                  if (restaurants.isNotEmpty) {
+                    restaurants.removeLast();
+                  }
+
+                  return Column(
+                    children: restaurants,
+                  );
+                }),
           ),
-        ),
+        )
       ],
-    );
-  }
-
-  Widget distanceDropdown() {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_drop_down),
-      elevation: 16,
-      style: const TextStyle(color: Colors.black),
-      borderRadius: BorderRadius.circular(10),
-      hint: const Text(
-        "Select Distance",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 15,
-        ),
-      ),
-      isExpanded: true,
-      underline: Container(),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
     );
   }
 
@@ -222,7 +149,11 @@ class _BottomContainerState extends State<BottomContainer> {
         ));
       },
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantScreen(restaurant: restaurant)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    RestaurantScreen(restaurant: restaurant)));
       },
       child: Container(
         height: 65,
@@ -293,17 +224,18 @@ class _BottomContainerState extends State<BottomContainer> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                double lat = restaurant.latitude;
-                double lng = restaurant.longitude;
-                GoogleMapUtil.changeLocation(lat, lng, provider.mapController);
-                provider.setMarker(
-                    Marker(
-                        markerId: const MarkerId("restaurant place"),
-                        position: LatLng(lat, lng),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueCyan)),
-                    1);
+                onTap: () {
+                  double lat = restaurant.latitude;
+                  double lng = restaurant.longitude;
+                  GoogleMapUtil.changeLocation(
+                      lat, lng, provider.mapController);
+                  provider.setMarker(
+                      Marker(
+                          markerId: const MarkerId("restaurant place"),
+                          position: LatLng(lat, lng),
+                          icon: BitmapDescriptor.defaultMarkerWithHue(
+                              BitmapDescriptor.hueCyan)),
+                      1);
                 },
                 child: const SizedBox(
                     width: 60,
@@ -311,8 +243,7 @@ class _BottomContainerState extends State<BottomContainer> {
                     child: Icon(
                       Icons.my_location,
                       color: Colors.grey,
-                    ))
-            ),
+                    ))),
           ],
         ),
       ),
