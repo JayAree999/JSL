@@ -86,35 +86,44 @@ class _SavedPlaceListState extends State<SavedPlaceList> {
                           ),
                         ],
                       ),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(0), // Remove any padding from the ListTile
-                        leading: SizedBox(
-                          height: 100,
-                          width: 90,
-                          child: place['place']['photos'] != null && place['place']['photos'].isNotEmpty
-                              ? Image.network(
-                            'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place['place']['photos'][0]['photo_reference']}&key=$apiKey',
-                            fit: BoxFit.cover,
-                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                              return Icon(Icons.image_not_supported);
-                            },
-                          )
-                              : Icon(Icons.image_not_supported),
-                        ),
-                        title: Text(place['place']['name'] ?? 'No name'),
+                      child:ListTile(
+                      // Remove any padding from the ListTile
+                leading: SizedBox(
+                height: 150,
+                width: 50,
+                child: Align(
+                alignment: Alignment.center,
+                child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: place['place']['photos'] != null && place['place']['photos'].isNotEmpty
+                    ? Image.network(
+                  'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place['place']['photos'][0]['photo_reference']}&key=$apiKey',
+                  fit: BoxFit.cover,
+                  height: 50, // Adjust the height of the image
+                  width: 50, // Adjust the width of the image
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    return Icon(Icons.image_not_supported);
+                  },
+                )
+                    : Icon(Icons.image_not_supported),
+                ),
+                ),
+                ),
+                        title: Text(place['place']['name'] ?? 'No name', maxLines: 1,
+                          overflow: TextOverflow.ellipsis,),
                         subtitle: Flex(
                           direction: Axis.horizontal,
                           children: [
                             Flexible(
                               child: Text(
                                 '${place['place']['formatted_address'] ?? 'No address'}',
-                                maxLines: 3,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
-
+                        trailing: Icon(Icons.delete), // Add a delete icon on the right
                         onTap: () {
                           Navigator.push(
                             context,

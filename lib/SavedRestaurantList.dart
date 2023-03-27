@@ -113,7 +113,6 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                             : Icon(Icons.image_not_supported),
                       ),
                       title: Text(restaurant['name'] ?? 'No name'),
-                      subtitle: Text(restaurant['address'] ?? 'No address'),
                       trailing: IconButton(
                         icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
