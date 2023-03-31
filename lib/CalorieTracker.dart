@@ -255,6 +255,38 @@ class _CalorieTrackerState extends State<CalorieTracker> {
     });
   }
 
+  StatelessWidget _displayMeals() {
+    if (foods.isEmpty) {
+      return Container(
+        margin: const EdgeInsets.all(30),
+        child: Text(
+          "Type a meal in the box above and press Enter to submit. Result may take a few seconds to load.",
+          style: TextStyle(
+            color: Colors.black.withOpacity(0.5),
+          ),
+        ),
+      );
+    } else {
+      return ListView.builder(
+        itemCount: foods.length,
+        itemBuilder: (context, index) {
+          return Card(
+              child: ListTile(
+                title: Text(foods[index]),
+                subtitle: Text("~${calories[index]} Kcal."),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () async {
+                    _removeFoods(index);
+                  },
+                ),
+              )
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -266,8 +298,8 @@ class _CalorieTrackerState extends State<CalorieTracker> {
           children: [
             Center(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                height: 300,
+                padding: const EdgeInsets.all(10),
+                height: 240,
                 width: 360,
                 decoration: const BoxDecoration(
                   color: Colors.redAccent,
@@ -275,92 +307,111 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                 ),
                 child: Column(
                   children: [
-                    const Center(
-                      child: Text(
-                        "Today's Calories",
-                        style: TextStyle(
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(15, 0, 30, 0),
+                          child: const Text(
+                            "Today's Calories: ",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          margin: const EdgeInsets.fromLTRB(15, 10, 0, 12),
+                          height: 48,
+                          width: 112,
+                          child: Center(
+                            child: Text(
+                              todaysCalories.toString(),
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 12),
-                        height: 48,
-                        width: 112,
-                        color: Colors.white,
-                        child: Center(
-                          child: Text(
-                            todaysCalories.toString(),
-                            style: const TextStyle(
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: const Text(
+                            "Average past 7 days: ",
+                            style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
-                      ),
+                          
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            margin: const EdgeInsets.fromLTRB(10, 10, 0, 12),
+                            height: 48,
+                            width: 112,
+                            child: Center(
+                              child: Text(
+                                dailyAverage.toString(),
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                    const Center(
-                      child: Text(
-                        "Average past 7 days",
-                        style: TextStyle(
-                          color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 12),
-                        height: 48,
-                        width: 112,
-                        color: Colors.white,
-                        child: Center(
-                          child: Text(
-                            dailyAverage.toString(),
-                            style: const TextStyle(
+                    Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: const Text(
+                            "Total past 7 days: ",
+                            style: TextStyle(
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const Center(
-                      child: Text(
-                        "Total past 7 days",
-                        style: TextStyle(
+
+                        Container(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(0, 10, 0, 12),
-                        height: 48,
-                        width: 112,
-                        color: Colors.white,
-                        child: Center(
-                          child: Text(
-                            weeklyTotal.toString(),
-                            style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          margin: const EdgeInsets.fromLTRB(40, 10, 0, 12),
+                          height: 48,
+                          width: 112,
+                          child: Center(
+                            child: Text(
+                              weeklyTotal.toString(),
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
+                      ],
+                    )
                   ],
                 ),
               ),
             ),
-
 
             Container(
               padding: const EdgeInsets.all(15),
@@ -420,23 +471,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
-                      child: ListView.builder(
-                        itemCount: foods.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                              child: ListTile(
-                                title: Text(foods[index]),
-                                subtitle: Text("~${calories[index]} Kcal."),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () async {
-                                    _removeFoods(index);
-                                  },
-                                ),
-                              )
-                          );
-                        },
-                      )
+                      child: _displayMeals(),
                   ),
                   ElevatedButton(
                     onPressed: () async {
@@ -459,7 +494,7 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                       height: 20,
                       alignment: Alignment.center,
                       child: const Text(
-                        "Submit today's calories and clear table",
+                        "Submit today's meals and clear table",
                       ),
                     ),
                   ),

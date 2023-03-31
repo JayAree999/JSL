@@ -94,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Icons.person_outlined,
                     color: Color.fromRGBO(0, 0, 0, 100),
                   ),
+
                   hintText: 'E-mail',
                 ),
               )),
