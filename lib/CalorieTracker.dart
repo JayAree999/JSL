@@ -475,12 +475,16 @@ class _CalorieTrackerState extends State<CalorieTracker> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      _addFirebaseDailyTotal();
-                      _clearFirebaseMealTracker();
-                      setState(() {
-                        foods = [];
-                        calories = [];
-                      });
+                      if (foods.isEmpty) {
+                        return;
+                      } else {
+                        _addFirebaseDailyTotal();
+                        _clearFirebaseMealTracker();
+                        setState(() {
+                          foods = [];
+                          calories = [];
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white, backgroundColor: Colors.pink,
