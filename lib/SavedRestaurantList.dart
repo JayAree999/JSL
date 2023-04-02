@@ -11,7 +11,6 @@ class SavedRestaurantList extends StatefulWidget {
 
 String currentUserId = '';
 
-
 class _SavedRestaurantListState extends State<SavedRestaurantList> {
   @override
   void initState() {
@@ -48,11 +47,11 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No data'));
+            return const Center(child: Text('No data'));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
@@ -71,10 +70,10 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                   key: ValueKey(snapshot.data!.docs[index].id),
                   direction: DismissDirection.endToStart,
                   background: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     alignment: Alignment.centerRight,
                     color: Colors.red,
-                    child: Icon(Icons.delete, color: Colors.white),
+                    child: const Icon(Icons.delete, color: Colors.white),
                   ),
                   onDismissed: (direction) {
                     // Remove the item from Firestore
@@ -84,8 +83,7 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                         .delete();
                   },
                   child: Container(
-
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                    margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white,
@@ -94,27 +92,30 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 2,
                           blurRadius: 5,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
-
                     child: ListTile(
-
-                      contentPadding: EdgeInsets.all(0), // Remove any padding from the ListTile
-                      leading: SizedBox(
-                        height: 120,
-                        width: 90,
-                        child: restaurant['restaurant']['image'] != null && isValidUrl(restaurant['restaurant']['image'])
-                            ? Image.network(
-                          restaurant['restaurant']['image'].trim(),
-                          fit: BoxFit.cover,
-                        )
-                            : Icon(Icons.image_not_supported),
-                      ),
-                      title: Text(restaurant['name'] ?? 'No name'),
+                      contentPadding: const EdgeInsets.all(0),
+                      // Remove any padding from the ListTile
+                      leading: restaurant['restaurant']['image'] != null &&
+                              isValidUrl(restaurant['restaurant']['image'])
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                restaurant['restaurant']['image'].trim(),
+                                width: 75,
+                                height: 75,
+                                fit: BoxFit.fill,
+                              ),
+                            )
+                          : const Icon(Icons.image_not_supported),
+                      title: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(restaurant['name'] ?? 'No name')),
                       trailing: IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           // Remove the item from Firestore
                           FirebaseFirestore.instance
@@ -123,19 +124,15 @@ class _SavedRestaurantListState extends State<SavedRestaurantList> {
                               .delete();
                         },
                       ),
-                       onTap: () {
-                         Navigator.push(
-                           context,
-                           MaterialPageRoute(
-                             builder: (context) =>
-
-
-                               LocationScreen(startingPlace: result)
-                          ),
-                         );
-                       },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  LocationScreen(startingPlace: result)),
+                        );
+                      },
                     ),
-
                   ),
                 );
               },

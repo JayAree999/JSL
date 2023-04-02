@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
             ),
         '/calorie': (context) => CalorieTracker(),
       },
+      debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return ScrollConfiguration(
           behavior: MyBehavior(),
