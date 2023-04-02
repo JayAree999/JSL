@@ -1,4 +1,4 @@
-package com.example.eat_local
+package com.jsl
 
 import io.flutter.embedding.android.FlutterActivity
 
