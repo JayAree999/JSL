@@ -101,8 +101,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       return meals;
 
     } catch (e) {
-      print(e);
-      print("CREATING MEAL TRACKER DOCUMENT");
       await _firestore.collection('meal tracker').doc(_currentUser?.email).set(
           {
             'meals' : foods,
@@ -133,8 +131,6 @@ class _CalorieTrackerState extends State<CalorieTracker> {
       int todaysCalories = snapshot.get('day ${lastDay - 1} total');
       return todaysCalories;
     } catch (e) {
-      print(e);
-      print("CREATING CALORIE TRACKER DOCUMENT");
       await _firestore.collection('calorie tracker').doc(_currentUser?.email).set(
           {
             'day 0 total': 0

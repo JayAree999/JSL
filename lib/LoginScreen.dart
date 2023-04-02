@@ -130,7 +130,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   final user = await _auth.signInWithEmailAndPassword(
                       email: email, password: password);
                   if (user != null) {
-                    print("$email is in.");
                     Navigator.pushNamed(context, '/saved');
                   }
                 } catch (e) {
