@@ -155,17 +155,18 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   Widget allButtons() {
     User? currentUser = _auth.currentUser;
 
-    fireStore
-        .collection('restaurants')
-        .where('name',
-        isEqualTo: widget.restaurant.title)
-        .where('userId',
-        isEqualTo: _auth.currentUser!.uid)
-        .get().then((value) {
-          setState(() {
-            isSaved = value.size > 0;
-          });
-    });
+    if (currentUser != null) {
+      fireStore
+          .collection('restaurants')
+          .where('name', isEqualTo: widget.restaurant.title)
+          .where('userId', isEqualTo: _auth.currentUser!.uid)
+          .get()
+          .then((value) {
+        setState(() {
+          isSaved = value.size > 0;
+        });
+      });
+    }
 
     return SizedBox(
       height: safeHeight / 3 * 2,
@@ -266,14 +267,12 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                               ],
                             ),
                             child: FittedBox(
-                              fit: BoxFit.fill,
-                              child: isSaved? const Icon(
-                                  Icons.favorite,
-                                  color: Color(0xffea3f30))
-                                  : const Icon(
-                                  Icons.favorite_border,
-                                  color: Color(0xffea3f30))
-                            ),
+                                fit: BoxFit.fill,
+                                child: isSaved
+                                    ? const Icon(Icons.favorite,
+                                        color: Color(0xffea3f30))
+                                    : const Icon(Icons.favorite_border,
+                                        color: Color(0xffea3f30))),
                           ),
                         )
                       : const SizedBox(),
